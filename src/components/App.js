@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import './App.css';
-import VideoContainer from './containers/VideoContainer';
-import PlayerControls from './components/PlayerControls';
+import VideoContainer from '../containers/VideoContainer';
+import PlayerControls from './PlayerControls';
 
 const video = {
   videoId: 'gextz3oD634',
