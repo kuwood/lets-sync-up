@@ -17,7 +17,7 @@ class App extends Component {
         <div className="App-header">
           <h2>Welcome to React</h2>
         </div>
-        <p className="App-intro">
+        <div className="App-intro">
           <VideoContainer
             width={video.width}
             height={video.height}
@@ -25,7 +25,7 @@ class App extends Component {
             shouldPrestart={video.shouldPrestart}
           />
           <PlayerControls />
-        </p>
+        </div>
       </div>
     );
   }
