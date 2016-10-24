@@ -1,10 +1,27 @@
-import React, { Component } from 'react';
-import YouTubeVideo from 'stateful-react-youtube';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import YouTubeVideo from 'stateful-react-youtube'
+import * as videoActions from '../actions/videoActions'
 
-class VideoContainer extends Component {
+export class VideoContainer extends Component {
   constructor(props) {
     super(props)
+    this.onPlayingChange = this.onPlayingChange.bind(this)
+    this.setPosition = this.setPosition.bind(this)
   }
+
+  setPosition(position) {
+    this.props.dispatch(videoActions.setPosition(position))
+  }
+
+  onPlayingChange(playing) {
+    if (playing) {
+      this.props.dispatch(videoActions.playVideo())
+    } else {
+      this.props.dispatch(videoActions.pauseVideo())
+    }
+  }
+
   render() {
     return (
       <YouTubeVideo
@@ -12,9 +29,15 @@ class VideoContainer extends Component {
         height={this.props.height}
         videoId={this.props.videoId}
         shouldPrestart={this.props.shouldPrestart}
+        position={this.props.position}
+        playing={this.props.playing}
+        onProgress={this.setPosition}
+        onPlayingChange={this.onPlayingChange}
       />
     )
   }
 }
 
-export default VideoContainer;
+let Container = connect()(VideoContainer)
+
+export default Container

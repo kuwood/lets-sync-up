@@ -1,7 +1,12 @@
 body {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+}
+
+#root {
+  box-sizing: inherit;
 }
 
 .App {
@@ -11,15 +16,54 @@ body {
 .App-header {
   background-color: #222;
   height: 50px;
-  padding: 20px;
   color: white;
+  vertical-align: middle;
 }
 
-.App-intro {
+.App-header h2 {
+  margin: 0;
+  line-height: 50px;
+}
+
+.controls-container {
+  height: 50px;
+  vertical-align: middle;
+}
+
+.player-controls {
+  display: inline-block;
+  line-height: 50px;
+}
+
+.controls-container p {
+  margin: 0;
+  display: inline-block;
+  line-height: 50px;
+  padding-left: 20px;
+}
+
+.video-container {
+  display: inline-block;
+  min-width: 80%;
   font-size: large;
-  height: 700px;
+  height: calc(100vh - 104px);
 }
 
 .content, .video {
   height: 100%;
+}
+
+.chat-container {
+  display: inline-block;
+  height: 100%;
+  width: 20%;
+  max-width: 400px;
+  min-width: 200px;
+  vertical-align: top;
+  background-color: blue;
+}
+
+.chat-container p {
+  margin: 0;
+  height: calc(100vh - 104px);
 }
