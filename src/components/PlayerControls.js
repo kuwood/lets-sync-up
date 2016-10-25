@@ -14,7 +14,6 @@ export class PlayerControls extends Component {
 
   setPosition(e) {
     const input = e.target.value
-    console.log(e.target.value);
     this.props.dispatch(videoActions.setPosition(input))
   }
 

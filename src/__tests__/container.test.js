@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import VideoContainer from '../containers/VideoContainer'
+import { VideoContainer } from '../containers/VideoContainer'
 
 describe('VideoContainer', () => {
   it('renders without crashing', () => {
