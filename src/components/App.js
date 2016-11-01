@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import VideoContainer from '../containers/VideoContainer'
 import PlayerControls from './PlayerControls'
+import Navigation from './Navigation'
 
 const testVideo = {
   videoId: 'gextz3oD634',
@@ -14,9 +15,7 @@ export class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="App-header">
-          <h2>Lets sync up</h2>
-        </div>
+        <Navigation />
         <div className="controls-container">
           <PlayerControls
             playing={this.props.video.playing}
