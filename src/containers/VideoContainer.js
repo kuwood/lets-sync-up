@@ -26,14 +26,15 @@ export class VideoContainer extends Component {
     return (
       <YouTubeVideo
         width={this.props.width}
-        height={this.props.height}
         videoId={this.props.videoId}
         shouldPrestart={this.props.shouldPrestart}
         position={this.props.position}
         playing={this.props.playing}
         onProgress={this.setPosition}
         onPlayingChange={this.onPlayingChange}
+        playerVars={{controls: 0}}
       />
+    // height={this.props.height}
     )
   }
 }

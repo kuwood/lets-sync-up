@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Grid, Row, Col } from 'react-bootstrap'
 import VideoContainer from '../containers/VideoContainer'
 import PlayerControls from './PlayerControls'
 import Navigation from './Navigation'
+import Chat from './Chat'
 
 const testVideo = {
   videoId: 'gextz3oD634',
@@ -16,28 +18,31 @@ export class App extends Component {
     return (
       <div className="App">
         <Navigation />
-        <div className="controls-container">
-          <PlayerControls
-            playing={this.props.video.playing}
-            user={this.props.user}
-            room={this.props.room}
-          />
-          <p className="stats">Playing: {this.props.video.playing.toString()}</p>
-          <p className="stats">{Math.round(this.props.video.position)}ms</p>
-        </div>
-        <div className="video-container">
-          <VideoContainer
-            width={testVideo.width}
-            height={testVideo.height}
-            videoId={testVideo.videoId}
-            shouldPrestart={testVideo.shouldPrestart}
-            playing={this.props.video.playing}
-            position={this.props.video.position}
-          />
-        </div>
-        <div className="chat-container">
-          <p>chat</p>
-        </div>
+        <Grid>
+          <Row className="show-grid">
+            <Col xs={12} md={8}>
+              <VideoContainer
+                width={testVideo.width}
+                height={testVideo.height}
+                videoId={testVideo.videoId}
+                shouldPrestart={testVideo.shouldPrestart}
+                playing={this.props.video.playing}
+                position={this.props.video.position}
+              />
+              <PlayerControls
+                playing={this.props.video.playing}
+                user={this.props.user}
+                room={this.props.room}
+              />
+              <p className="stats">Playing: {this.props.video.playing.toString()}</p>
+              <p className="stats">{Math.round(this.props.video.position)}ms</p>
+            </Col>
+            <Col xs={12} md={4}>
+              <Chat />
+            </Col>
+          </Row>
+        </Grid>
+
       </div>
     )
   }

@@ -4,6 +4,7 @@ import * as videoActions from '../actions/videoActions'
 import * as userActions from '../actions/userActions'
 import * as roomActions from '../actions/roomActions'
 import { socket } from '../index'
+import { Panel, Button, Form, FormControl } from 'react-bootstrap'
 
 export class PlayerControls extends Component {
   constructor(props) {
@@ -31,10 +32,11 @@ export class PlayerControls extends Component {
 
   setPosition(e) {
     let input
-    if (e.target.value) input = e.target.value
-    else input = e
-    socket.emit('setPosition', input)
-    this.props.dispatch(videoActions.setPosition(input))
+    if (e.target.value) {
+      input = e.target.value
+      socket.emit('setPosition', input)
+      this.props.dispatch(videoActions.setPosition(input))
+    }
   }
 
   toggleReady() {
@@ -61,18 +63,22 @@ export class PlayerControls extends Component {
 
   render() {
     return (
-      <div className="player-controls">
-        <input
-          placeholder="Enter a time"
-          onBlur={this.setPosition}
-        />
-        <button onClick={this.toggleReady}>
-          {this.props.user.isReady ? "not ready" : "ready"}
-        </button>
-        <button onClick={this.togglePauseRequest}>
-          {this.props.user.requestPause ? "Request play" : "Request pause"}
-        </button>
-      </div>
+      <Panel >
+        <Form inline>
+          <FormControl
+            placeholder="Enter a time"
+            onBlur={this.setPosition}
+          />
+          {' '}
+          <Button onClick={this.toggleReady}>
+            {this.props.user.isReady ? "not ready" : "ready"}
+          </Button>
+          {' '}
+          <Button onClick={this.togglePauseRequest}>
+            {this.props.user.requestPause ? "Request play" : "Request pause"}
+          </Button>
+        </Form>
+      </Panel>
     )
   }
 }

@@ -1,16 +1,23 @@
+html {
+  height: 100%;
+}
+
 body {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  height: 100%;
 }
 
 #root {
   box-sizing: inherit;
+  height: 100%;
 }
 
 .App {
   text-align: center;
+  height: 100%;
 }
 
 .App-header {
@@ -20,14 +27,10 @@ body {
   vertical-align: middle;
 }
 
-.App-header h2 {
-  margin: 0;
-  line-height: 50px;
-}
-
 .controls-container {
-  height: 50px;
-  vertical-align: middle;
+  /*height: 50px;
+  vertical-align: middle;*/
+  margin-bottom: 20px;
 }
 
 .player-controls {
@@ -44,9 +47,8 @@ body {
 
 .video-container {
   display: inline-block;
-  min-width: 80%;
   font-size: large;
-  height: calc(100vh - 104px);
+  height: calc(100vh - 72px);
 }
 
 .content, .video {
@@ -55,15 +57,20 @@ body {
 
 .chat-container {
   display: inline-block;
-  height: 100%;
-  width: 20%;
-  max-width: 400px;
-  min-width: 200px;
-  vertical-align: top;
-  background-color: blue;
+  height: calc(100vh - 243px);
+  width: 100%;
+  vertical-align: text-bottom;
 }
 
 .chat-container p {
-  margin: 0;
-  height: calc(100vh - 104px);
+  text-align: left;
+}
+
+.well {
+  margin-bottom: 0;
+}
+
+.stats {
+  display: inline-block;
+  margin-left: 20px;
 }
