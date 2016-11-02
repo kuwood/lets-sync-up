@@ -8,14 +8,6 @@ const initialState = {
 
 function userReducer(state = initialState, action) {
   switch (action.type) {
-    case userActions.REQUEST_PAUSE_VIDEO:
-      return Object.assign({}, state, {
-        requestPause: true
-      })
-    case userActions.REQUEST_PLAY_VIDEO:
-      return Object.assign({}, state, {
-        requestPause: false
-      })
     case userActions.IS_READY:
       return Object.assign({}, state, {
         requestPause: false,
