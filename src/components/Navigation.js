@@ -1,5 +1,6 @@
 import React from 'react'
 import { Navbar, Nav, NavItem } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 
 const Navigation = (props) => {
   return (
@@ -16,7 +17,7 @@ const Navigation = (props) => {
           <NavItem eventKey={2} href="#">Join a room</NavItem>
         </Nav>
         <Nav pullRight>
-          <NavItem eventKey={1} href="#">Sign up</NavItem>
+          <NavItem eventKey={1}><Button bsStyle="primary" bsSize="xsmall">Sign up</Button></NavItem>
           <NavItem eventKey={2} href="#">Login</NavItem>
         </Nav>
       </Navbar.Collapse>

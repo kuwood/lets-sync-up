@@ -28,6 +28,8 @@ export class App extends Component {
                 shouldPrestart={testVideo.shouldPrestart}
                 playing={this.props.video.playing}
                 position={this.props.video.position}
+                isOwner={this.props.user.isOwner}
+                room={this.props.room}
               />
               <PlayerControls
                 playing={this.props.video.playing}

@@ -2,6 +2,7 @@ export const REQUEST_PLAY_VIDEO = 'REQUEST_PLAY_VIDEO'
 export const REQUEST_PAUSE_VIDEO = 'REQUEST_PAUSE_VIDEO'
 export const IS_READY = 'IS_READY'
 export const IS_NOT_READY = 'IS_NOT_READY'
+export const IS_OWNER = 'IS_OWNER'
 
 export const requestPlayVideo = () => {
   return {
@@ -29,5 +30,12 @@ export const isNotReady = () => {
   return {
     type: IS_NOT_READY,
     isReady: false
+  }
+}
+
+export const isOwner = (bool) => {
+  return {
+    type: IS_OWNER,
+    isOwner: bool
   }
 }

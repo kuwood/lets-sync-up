@@ -2,17 +2,19 @@ export const PAUSE_VIDEO = 'PAUSE_VIDEO'
 export const PLAY_VIDEO = 'PLAY_VIDEO'
 export const SET_POSITION = 'SET_POSITION'
 
-export const pauseVideo = () => {
+export const pauseVideo = (isOwner) => {
   return {
     type: PAUSE_VIDEO,
-    playing: false
+    playing: false,
+    isOwner: isOwner
   }
 }
 
-export const playVideo = () => {
+export const playVideo = (isOwner) => {
   return {
     type: PLAY_VIDEO,
-    playing: true
+    playing: true,
+    isOwner: isOwner
   }
 }
 

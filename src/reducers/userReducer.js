@@ -1,6 +1,7 @@
 import * as userActions from '../actions/userActions'
 
 const initialState = {
+  isOwner: false,
   requestPause: false,
   isReady: false
 }
@@ -23,6 +24,10 @@ function userReducer(state = initialState, action) {
     case userActions.IS_NOT_READY:
       return Object.assign({}, state, {
         isReady: false
+      })
+    case userActions.IS_OWNER:
+      return Object.assign({}, state, {
+        isOwner: action.isOwner
       })
     default:
       return state

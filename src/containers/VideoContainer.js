@@ -15,10 +15,19 @@ export class VideoContainer extends Component {
   }
 
   onPlayingChange(playing) {
+    let myPlayer = document.getElementById('widget2')
     if (playing) {
-      this.props.dispatch(videoActions.playVideo())
+      this.props.dispatch(videoActions.playVideo(this.props.isOwner))
+      //disables iframe play/pause button
+      if (!this.props.room.isReady) {
+        myPlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
+      }
     } else {
-      this.props.dispatch(videoActions.pauseVideo())
+      this.props.dispatch(videoActions.pauseVideo(this.props.isOwner))
+      //disables iframe play/pause button
+      if (this.props.room.isReady) {
+        myPlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*')
+      }
     }
   }
 
@@ -32,9 +41,7 @@ export class VideoContainer extends Component {
         playing={this.props.playing}
         onProgress={this.setPosition}
         onPlayingChange={this.onPlayingChange}
-        playerVars={{controls: 0}}
       />
-    // height={this.props.height}
     )
   }
 }

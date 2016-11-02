@@ -22,21 +22,33 @@ io.on('connection', socket => {
   socket.emit('join attempt', 'joining testRoom');
   socket.join('testRoom');
   roomCount += 1;
+  if (roomCount === 1) {
+    socket.emit('isOwner', true);
+  }
   io.sockets.in('testRoom').emit('roomCount', roomCount);
-  socket.on('join success', data => {
-    console.log(data);
+  socket.on('join success', joinMessage => {
+    console.log('user joined room. roomCount:', roomCount);
   });
   socket.on('isReady', data => {
-    state.users = data;
-    io.sockets.in('testRoom').emit('roomReady', state.users);
-    console.log(state.users);
+    let userData = data
+    state.users = data.isReady;
+    if (userData.isOwner) {
+      io.sockets.in('testRoom').emit('roomReady', state.users);
+    }
   })
   socket.on('setPosition', data => {
     state.video = data
     io.sockets.to('testRoom').emit('broadcastPosition', state.video);
     console.log(state.video);
   })
+  socket.on('disconnect', data => {
+    roomCount--
+    if (roomCount === 1) {
+      io.sockets.in('testRoom').emit('isOwner', true);
+    }
+    console.log('user disconnected. roomCount:', roomCount);
+    io.sockets.in('testRoom').emit('roomCount', roomCount);
+  })
 });
-
 
 server.listen(process.env.PORT || 8080);

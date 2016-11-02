@@ -12,13 +12,17 @@ export class PlayerControls extends Component {
     this.setPosition = this.setPosition.bind(this)
     this.toggleReady = this.toggleReady.bind(this)
     this.togglePauseRequest = this.togglePauseRequest.bind(this)
+
     socket.on('join attempt', data => {
         console.log(data);
         socket.emit('join success', 'user joined testRoom');
     });
     socket.on('roomCount', data => {
-      console.log('room count', data);
+      console.log('room count', data)
     });
+    socket.on('isOwner', data => {
+      this.props.dispatch(userActions.isOwner(true))
+    })
     socket.on('roomReady', data => {
       this.props.dispatch(roomActions.roomReady(data))
       if (data) this.props.dispatch(videoActions.playVideo())
@@ -42,14 +46,18 @@ export class PlayerControls extends Component {
   toggleReady() {
     if (this.props.user.isReady) {
       this.props.dispatch(userActions.isNotReady())
-      this.props.dispatch(roomActions.roomReady(false))
-      socket.emit('isReady', false)
-      this.props.dispatch(videoActions.pauseVideo())
+      socket.emit('isReady', {isReady: false, isOwner: this.props.user.isOwner})
+      if (this.props.user.isOwner) {
+        this.props.dispatch(roomActions.roomReady(false))
+        this.props.dispatch(videoActions.pauseVideo(this.props.user.isOwner))
+      }
     } else {
-    this.props.dispatch(userActions.isReady())
-    this.props.dispatch(roomActions.roomReady(true))
-    socket.emit('isReady', true)
-    this.props.dispatch(videoActions.playVideo())
+      this.props.dispatch(userActions.isReady())
+      socket.emit('isReady', {isReady: true, isOwner: this.props.user.isOwner})
+      if (this.props.user.isOwner) {
+        this.props.dispatch(roomActions.roomReady(true))
+        this.props.dispatch(videoActions.playVideo())
+      }
     }
   }
 
