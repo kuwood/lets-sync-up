@@ -11,12 +11,7 @@ export class PlayerControls extends Component {
     super(props)
     this.setPosition = this.setPosition.bind(this)
     this.toggleReady = this.toggleReady.bind(this)
-    this.togglePauseRequest = this.togglePauseRequest.bind(this)
 
-    socket.on('join attempt', data => {
-        console.log(data);
-        socket.emit('join success', 'user joined testRoom');
-    });
     socket.on('roomCount', data => {
       console.log('room count', data)
     });
@@ -37,7 +32,7 @@ export class PlayerControls extends Component {
   setPosition(e) {
     let input
     if (e.target.value) {
-      input = e.target.value
+      input = e.target.value * 1000
       socket.emit('setPosition', input)
       this.props.dispatch(videoActions.setPosition(input))
     }
@@ -47,44 +42,36 @@ export class PlayerControls extends Component {
     if (this.props.user.isReady) {
       this.props.dispatch(userActions.isNotReady())
       socket.emit('isReady', {isReady: false, isOwner: this.props.user.isOwner})
-      if (this.props.user.isOwner) {
-        this.props.dispatch(roomActions.roomReady(false))
-        this.props.dispatch(videoActions.pauseVideo(this.props.user.isOwner))
-      }
     } else {
       this.props.dispatch(userActions.isReady())
       socket.emit('isReady', {isReady: true, isOwner: this.props.user.isOwner})
-      if (this.props.user.isOwner) {
-        this.props.dispatch(roomActions.roomReady(true))
-        this.props.dispatch(videoActions.playVideo())
-      }
-    }
-  }
-
-  togglePauseRequest() {
-    if (this.props.user.requestPause) {
-      this.props.dispatch(userActions.requestPlayVideo())
-    } else {
-      this.props.dispatch(userActions.requestPauseVideo())
     }
   }
 
   render() {
+    let buttons
+    let positionInput
+    let spacer
+    if (this.props.user.isOwner) {
+      positionInput = <FormControl
+        placeholder="Enter a time"
+        onBlur={this.setPosition}
+      />
+    spacer = ' '
+      buttons = <Button onClick={this.toggleReady}>
+        {this.props.user.isReady ? "pause" : "play"}
+      </Button>
+    } else {
+      buttons = <Button onClick={this.toggleReady}>
+        {this.props.user.isReady ? "Not ready" : "Ready"}
+      </Button>
+    }
     return (
       <Panel >
         <Form inline>
-          <FormControl
-            placeholder="Enter a time"
-            onBlur={this.setPosition}
-          />
-          {' '}
-          <Button onClick={this.toggleReady}>
-            {this.props.user.isReady ? "not ready" : "ready"}
-          </Button>
-          {' '}
-          <Button onClick={this.togglePauseRequest}>
-            {this.props.user.requestPause ? "Request play" : "Request pause"}
-          </Button>
+          {positionInput}
+          {spacer}
+          {buttons}
         </Form>
       </Panel>
     )
