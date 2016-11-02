@@ -8,15 +8,19 @@ describe('App', () => {
   const video = {
     playing: false
   }
-  it('renders without crashing', () => {
-    shallow(<App video={video} />)
+  const userState = {
+    isOwner: false,
+    isReady: false
+  }
+  it('renders App component without crashing', () => {
+    shallow(<App video={video} user={userState} />)
   })
 })
 
 describe('PlayerControls', () => {
-  it('renders without crashing', () => {
+  it('renders PlayerControls without crashing', () => {
     const userState = {
-      requestPause: false,
+      isOwner: false,
       isReady: false
     }
     const div = document.createElement('div')

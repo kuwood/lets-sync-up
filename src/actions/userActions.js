@@ -5,7 +5,6 @@ export const IS_OWNER = 'IS_OWNER'
 export const isReady = () => {
   return {
     type: IS_READY,
-    requestPause: false,
     isReady: true
   }
 }

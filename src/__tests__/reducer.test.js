@@ -94,34 +94,7 @@ describe('userReducer', () => {
     expect(
       userReducer(undefined, {})
     ).toEqual({
-      requestPause: false,
-      isReady: false
-    })
-  })
-
-  it('should handle REQUEST_PAUSE_VIDEO', () => {
-    expect(
-      userReducer(undefined, {
-        type: userActions.REQUEST_PAUSE_VIDEO,
-        requestPause: true
-      })
-    ).toEqual({
-      requestPause: true,
-      isReady: false
-    })
-  })
-
-  it('should handle REQUEST_PLAY_VIDEO', () => {
-    expect(
-      userReducer({
-        requestPause: true,
-        isReady: false
-      }, {
-        type: userActions.REQUEST_PLAY_VIDEO,
-        requestPause: false
-      })
-    ).toEqual({
-      requestPause: false,
+      isOwner: false,
       isReady: false
     })
   })
@@ -133,7 +106,7 @@ describe('userReducer', () => {
         isReady: true
       })
     ).toEqual({
-      requestPause: false,
+      isOwner: false,
       isReady: true
     })
   })
@@ -141,14 +114,14 @@ describe('userReducer', () => {
   it('should handle IS_NOT_READY', () => {
     expect(
       userReducer({
-        requestPause: false,
+        isOwner: false,
         isReady: true
       }, {
         type: userActions.IS_NOT_READY,
         isReady: false
       })
     ).toEqual({
-      requestPause: false,
+      isOwner: false,
       isReady: false
     })
   })

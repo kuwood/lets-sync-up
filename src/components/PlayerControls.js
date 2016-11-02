@@ -57,7 +57,7 @@ export class PlayerControls extends Component {
         placeholder="Enter a time"
         onBlur={this.setPosition}
       />
-    spacer = ' '
+      spacer = ' '
       buttons = <Button onClick={this.toggleReady}>
         {this.props.user.isReady ? "pause" : "play"}
       </Button>
@@ -66,6 +66,7 @@ export class PlayerControls extends Component {
         {this.props.user.isReady ? "Not ready" : "Ready"}
       </Button>
     }
+
     return (
       <Panel >
         <Form inline>

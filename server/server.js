@@ -42,7 +42,7 @@ io.on('connection', socket => {
     console.log(socket.id, 'isReady ', data, 'room ready ', state.room.ready);
     state.users[socket.id].isReady = data.isReady;
 
-    //check to see if all users are ready
+    // check to see if all users are ready
     let readyCount = 0;
     for (let key in state.users) {
       if (state.users.hasOwnProperty(key)) {

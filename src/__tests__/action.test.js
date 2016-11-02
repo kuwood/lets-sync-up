@@ -29,24 +29,9 @@ describe('videoActions', () => {
 })
 
 describe('userActions', () => {
-  it('should create an action to set requestPause to false', () => {
-    const expectedAction = {
-      type: userActions.REQUEST_PLAY_VIDEO,
-      requestPause: false
-    }
-    expect(userActions.requestPlayVideo()).toEqual(expectedAction)
-  })
-  it('it should create an action to set requestPause to true', () => {
-    const expectedAction = {
-      type: userActions.REQUEST_PAUSE_VIDEO,
-      requestPause: true
-    }
-    expect(userActions.requestPauseVideo()).toEqual(expectedAction)
-  })
   it('should create an action to set user as being ready', () => {
     const expectedAction = {
       type: userActions.IS_READY,
-      requestPause: false,
       isReady: true
     }
     expect(userActions.isReady()).toEqual(expectedAction)
