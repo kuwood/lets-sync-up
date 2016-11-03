@@ -1,8 +1,8 @@
 import * as userActions from '../actions/userActions'
 
 const initialState = {
-  isOwner: false,
-  isReady: false
+  isReady: false,
+  isOwner: false
 }
 
 function userReducer(state = initialState, action) {

@@ -15,19 +15,14 @@ export class VideoContainer extends Component {
   }
 
   onPlayingChange(playing) {
+    // disallows using ifram pause/play
     let myPlayer = document.getElementById('widget2')
-    if (playing) {
-      this.props.dispatch(videoActions.playVideo(this.props.isOwner))
-      //disables iframe play/pause button
-      if (!this.props.room.isReady) {
-        myPlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
-      }
+    if (!this.props.room.ownerReady) {
+      console.log('owner not ready should pause');
+      myPlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
     } else {
-      this.props.dispatch(videoActions.pauseVideo(this.props.isOwner))
-      //disables iframe play/pause button
-      if (this.props.room.isReady) {
-        myPlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*')
-      }
+      console.log('owner is ready should play');
+      myPlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*')
     }
   }
 

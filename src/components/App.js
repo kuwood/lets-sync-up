@@ -28,13 +28,14 @@ export class App extends Component {
                 shouldPrestart={testVideo.shouldPrestart}
                 playing={this.props.video.playing}
                 position={this.props.video.position}
-                isOwner={this.props.user.isOwner}
+                user={this.props.user}
                 room={this.props.room}
               />
               <PlayerControls
                 playing={this.props.video.playing}
                 user={this.props.user}
                 room={this.props.room}
+                video={this.props.video}
               />
               <p className="stats">Playing: {this.props.video.playing.toString()}</p>
               <p className="stats">{Math.round(this.props.video.position)}ms</p>

@@ -18,11 +18,17 @@ export class PlayerControls extends Component {
     socket.on('isOwner', data => {
       this.props.dispatch(userActions.isOwner(true))
     })
-    socket.on('roomReady', data => {
-      this.props.dispatch(roomActions.roomReady(data))
-      if (data) this.props.dispatch(videoActions.playVideo())
-      else this.props.dispatch(videoActions.pauseVideo())
-      console.log(data, 'roomready');
+    socket.on('roomReady', bool => {
+      this.props.dispatch(roomActions.roomReady(bool))
+      console.log(bool, 'roomready');
+    })
+    socket.on('roomOwnerStatus', bool => {
+      this.props.dispatch(roomActions.ownerReady(bool))
+      if (bool) {
+        this.props.dispatch(videoActions.playVideo())
+      } else {
+        this.props.dispatch(videoActions.pauseVideo())
+      }
     })
     socket.on('broadcastPosition', data => {
       this.props.dispatch(videoActions.setPosition(data))
@@ -42,9 +48,17 @@ export class PlayerControls extends Component {
     if (this.props.user.isReady) {
       this.props.dispatch(userActions.isNotReady())
       socket.emit('isReady', {isReady: false, isOwner: this.props.user.isOwner})
+      if (this.props.user.isOwner) {
+        socket.emit('ownerReady', false)
+        this.props.dispatch(roomActions.ownerReady(false))
+      }
     } else {
       this.props.dispatch(userActions.isReady())
       socket.emit('isReady', {isReady: true, isOwner: this.props.user.isOwner})
+      if (this.props.user.isOwner) {
+        socket.emit('ownerReady', true)
+        this.props.dispatch(roomActions.ownerReady(true))
+      }
     }
   }
 
@@ -54,13 +68,20 @@ export class PlayerControls extends Component {
     let spacer
     if (this.props.user.isOwner) {
       positionInput = <FormControl
-        placeholder="Enter a time"
+        placeholder="Enter a time (in seconds)"
         onBlur={this.setPosition}
       />
       spacer = ' '
-      buttons = <Button onClick={this.toggleReady}>
-        {this.props.user.isReady ? "pause" : "play"}
-      </Button>
+      if (!this.props.room.isReady) {
+        console.log('room isReady', this.props.room.isReady);
+        buttons = <Button disabled>
+          Room not ready
+        </Button>
+      } else {
+        buttons = <Button onClick={this.toggleReady}>
+          {this.props.user.isReady ? "pause" : "play"}
+        </Button>
+      }
     } else {
       buttons = <Button onClick={this.toggleReady}>
         {this.props.user.isReady ? "Not ready" : "Ready"}

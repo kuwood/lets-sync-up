@@ -10,7 +10,10 @@ var io = socket_io(server);
 
 var roomCount = 0;
 var state = {
-  room: {ready: false},
+  room: {
+    ready: false,
+    ownerReady: false
+  },
   users: {},
   video: {
     playing: false,
@@ -18,11 +21,31 @@ var state = {
   }
 };
 
+function roomReady() {
+  let readyCount = 0;
+  let userLength = Object.keys(state.users).length
+  // check to see if all users are ready
+  for (let key in state.users) {
+    if (state.users.hasOwnProperty(key)) {
+      if (state.users[key].isReady) readyCount++;
+    };
+  };
+  // if all are ready change state to room ready
+  console.log(userLength, 'length/readyCount', readyCount);
+  if ( userLength === 1 || userLength - 1 === readyCount || userLength === readyCount) {
+    state.room.ready = true;
+    io.sockets.in('testRoom').emit('roomReady', state.room.ready);
+  } else {
+    state.room.ready = false;
+    io.sockets.in('testRoom').emit('roomReady', state.room.ready);
+  };
+}
+
 io.on('connection', socket => {
   socket.join('testRoom');
   roomCount += 1;
   console.log('user connected', socket.id);
-  console.log('user joined testRoom. roomCount:', roomCount);
+  console.log('user joined testRoom. roomCount:', roomCount, 'room ready', state.room.ready);
 
   // add new connection to state
   state.users[socket.id] = {
@@ -35,32 +58,21 @@ io.on('connection', socket => {
     socket.emit('isOwner', true);
     state.users[socket.id].isOwner = true;
   };
+  roomReady()
   io.sockets.in('testRoom').emit('roomCount', roomCount);
 
   // handle isReady
   socket.on('isReady', data => {
     console.log(socket.id, 'isReady ', data, 'room ready ', state.room.ready);
     state.users[socket.id].isReady = data.isReady;
+    roomReady();
+  });
 
-    // check to see if all users are ready
-    let readyCount = 0;
-    for (let key in state.users) {
-      if (state.users.hasOwnProperty(key)) {
-        if (state.users[key].isReady) readyCount++;
-      };
-    };
-    console.log(Object.keys(state.users).length, 'length/readyCount', readyCount);
-
-    // if all are ready change state to room ready
-    if (Object.keys(state.users).length === readyCount) {
-      state.room.ready = true;
-      io.sockets.in('testRoom').emit('roomReady', state.room.ready);
-    } else {
-      state.room.ready = false;
-      if (state.users[socket.id].isOwner) {
-        io.sockets.in('testRoom').emit('roomReady', state.room.ready);
-      };
-    };
+  // handle ownerReady
+  socket.on('ownerReady', bool => {
+    console.log('ownerReady is', bool);
+    state.room.ownerReady = bool
+    io.sockets.in('testRoom').emit('roomOwnerStatus', state.room.ownerReady)
   });
 
   // handle position setting
@@ -77,6 +89,7 @@ io.on('connection', socket => {
     if (roomCount === 1) {
       io.sockets.in('testRoom').emit('isOwner', true);
     }
+    roomReady()
     console.log('user disconnected. roomCount:', roomCount);
     io.sockets.in('testRoom').emit('roomCount', roomCount);
   });

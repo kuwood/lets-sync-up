@@ -1,7 +1,8 @@
 import * as roomActions from '../actions/roomActions'
 
 const initialState = {
-  isReady: false
+  isReady: false,
+  ownerReady: false
 }
 
 function roomReducer(state = initialState, action) {
@@ -9,6 +10,10 @@ function roomReducer(state = initialState, action) {
     case roomActions.ROOM_READY:
       return Object.assign({}, state, {
         isReady: action.isReady
+      })
+    case roomActions.OWNER_READY:
+      return Object.assign({}, state, {
+        ownerReady: action.ownerReady
       })
     default:
       return state
