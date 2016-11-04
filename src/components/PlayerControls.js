@@ -11,16 +11,14 @@ export class PlayerControls extends Component {
     super(props)
     this.setPosition = this.setPosition.bind(this)
     this.toggleReady = this.toggleReady.bind(this)
-
     socket.on('roomCount', data => {
       console.log('room count', data)
-    });
-    socket.on('isOwner', data => {
-      this.props.dispatch(userActions.isOwner(true))
     })
     socket.on('roomReady', bool => {
       this.props.dispatch(roomActions.roomReady(bool))
-      console.log(bool, 'roomready');
+    })
+    socket.on('isOwner', data => {
+      this.props.dispatch(userActions.isOwner(true))
     })
     socket.on('roomOwnerStatus', bool => {
       this.props.dispatch(roomActions.ownerReady(bool))
@@ -56,6 +54,7 @@ export class PlayerControls extends Component {
       this.props.dispatch(userActions.isReady())
       socket.emit('isReady', {isReady: true, isOwner: this.props.user.isOwner})
       if (this.props.user.isOwner) {
+        socket.emit('setPosition', this.props.video.position)
         socket.emit('ownerReady', true)
         this.props.dispatch(roomActions.ownerReady(true))
       }
