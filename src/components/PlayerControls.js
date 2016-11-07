@@ -4,7 +4,7 @@ import * as videoActions from '../actions/videoActions'
 import * as userActions from '../actions/userActions'
 import * as roomActions from '../actions/roomActions'
 import { socket } from '../index'
-import { Panel, Button, Form, FormControl } from 'react-bootstrap'
+import { Button, Form, FormControl, Well } from 'react-bootstrap'
 
 export class PlayerControls extends Component {
   constructor(props) {
@@ -88,13 +88,13 @@ export class PlayerControls extends Component {
     }
 
     return (
-      <Panel >
+      <Well >
         <Form inline>
           {positionInput}
           {spacer}
           {buttons}
         </Form>
-      </Panel>
+      </Well>
     )
   }
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import YouTubeVideo from 'stateful-react-youtube'
+import { socket } from '../index'
 import * as videoActions from '../actions/videoActions'
 
 export class VideoContainer extends Component {
@@ -8,6 +9,11 @@ export class VideoContainer extends Component {
     super(props)
     this.onPlayingChange = this.onPlayingChange.bind(this)
     this.setPosition = this.setPosition.bind(this)
+
+    socket.on('setVideo', id => {
+      console.log('setting id', id);
+      this.props.dispatch(videoActions.setVideo(id))
+    })
   }
 
   setPosition(position) {

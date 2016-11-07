@@ -16,6 +16,7 @@ var state = {
   },
   users: {},
   video: {
+    id: null,
     playing: false,
     position: 0
   }
@@ -61,6 +62,14 @@ io.on('connection', socket => {
   roomReady()
   io.sockets.in('testRoom').emit('roomCount', roomCount);
 
+  //assign videoId
+  socket.on('videoId', id => {
+    console.log('got id', id);
+    state.video['id'] = id;
+    console.log(state.video.id, 'state id');
+    io.sockets.in('testRoom').emit('setVideo', state.video.id)
+  })
+
   // handle isReady
   socket.on('isReady', data => {
     console.log(socket.id, 'isReady ', data, 'room ready ', state.room.ready);
@@ -78,7 +87,7 @@ io.on('connection', socket => {
   // handle position setting
   socket.on('setPosition', data => {
     state.video = data;
-    io.sockets.to('testRoom').emit('broadcastPosition', state.video);
+    io.sockets.in('testRoom').emit('broadcastPosition', state.video);
     console.log(state.video);
   });
 

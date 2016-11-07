@@ -45,6 +45,10 @@ body {
   padding-left: 20px;
 }
 
+.video {
+  margin-bottom: 15px;
+}
+
 .video-container {
   display: inline-block;
   font-size: large;
@@ -67,7 +71,7 @@ body {
 }
 
 .panel-body {
- background-color: #f6f6f6;
+ /*background-color: #f6f6f6;*/
 }
 
 .well {

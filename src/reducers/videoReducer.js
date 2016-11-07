@@ -2,7 +2,8 @@ import * as videoActions from '../actions/videoActions'
 
 const initialState = {
   playing: false,
-  position: 0
+  position: 0,
+  id: null
 }
 
 function videoReducer(state = initialState, action) {
@@ -18,6 +19,10 @@ function videoReducer(state = initialState, action) {
     case videoActions.SET_POSITION:
       return Object.assign({}, state, {
         position: action.position
+      })
+    case videoActions.SET_VIDEO:
+      return Object.assign({}, state, {
+        id: action.id
       })
     default:
       return state
