@@ -14,6 +14,9 @@ const testVideo = {
 
 export class App extends Component {
   render() {
+    let vidSource
+    if (this.props.user.isOwner) vidSource = <VideoSource />
+    else vidSource = null
     return (
       <div className="App">
         <Navigation />
@@ -23,7 +26,7 @@ export class App extends Component {
               <Jumbo />
             </Col>
             <Col xs={12} md={8}>
-              <VideoSource />
+              {vidSource}
               <VideoContainer
                 width={"100%"}
                 height={"100%"}
