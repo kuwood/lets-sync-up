@@ -10,6 +10,7 @@ describe('videoReducer', () => {
     expect(
       videoReducer(undefined, {})
     ).toEqual({
+      id: null,
       playing: false,
       position: 0
     })
@@ -22,11 +23,13 @@ describe('videoReducer', () => {
         playing: false
       })
     ).toEqual({
+        id: null,
         playing: false,
         position: 0
     })
     expect(
       videoReducer({
+        id: null,
         playing: true,
         position: 1
       }, {
@@ -34,6 +37,7 @@ describe('videoReducer', () => {
         playing: false
       })
     ).toEqual({
+      id: null,
       playing: false,
       position: 1
     })
@@ -46,11 +50,13 @@ describe('videoReducer', () => {
         playing: true
       })
     ).toEqual({
+        id: null,
         playing: true,
         position: 0
     })
     expect(
       videoReducer({
+        id: null,
         playing: false,
         position: 1
       }, {
@@ -58,6 +64,7 @@ describe('videoReducer', () => {
         playing: true
       })
     ).toEqual({
+      id: null,
       playing: true,
       position: 1
     })
@@ -71,11 +78,13 @@ describe('videoReducer', () => {
         position: position,
       })
     ).toEqual({
+        id: null,
         playing: false,
         position: position
     })
     expect(
       videoReducer({
+        id: null,
         playing: true,
         position: position
       }, {
@@ -83,6 +92,7 @@ describe('videoReducer', () => {
         position: position
       })
     ).toEqual({
+      id: null,
       playing: true,
       position: position
     })
