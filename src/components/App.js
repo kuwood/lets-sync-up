@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Grid, Row, Col } from 'react-bootstrap'
+import Jumbo from './Jumbo'
+import VideoSource from './VideoSource'
 import VideoContainer from '../containers/VideoContainer'
 import PlayerControls from './PlayerControls'
 import Navigation from './Navigation'
 import Chat from './Chat'
 
 const testVideo = {
-  videoId: 'gextz3oD634',
-  width: '100%',
-  height: '100%',
-  shouldPrestart: true
+  videoId: 'gextz3oD634'
 }
 
 export class App extends Component {
@@ -20,12 +19,16 @@ export class App extends Component {
         <Navigation />
         <Grid>
           <Row className="show-grid">
+            <Col xs={12}>
+              <Jumbo />
+            </Col>
             <Col xs={12} md={8}>
+              <VideoSource />
               <VideoContainer
-                width={testVideo.width}
-                height={testVideo.height}
-                videoId={testVideo.videoId}
-                shouldPrestart={testVideo.shouldPrestart}
+                width={"100%"}
+                height={"100%"}
+                videoId={this.props.video.id}
+                shouldPrestart
                 playing={this.props.video.playing}
                 position={this.props.video.position}
                 user={this.props.user}
