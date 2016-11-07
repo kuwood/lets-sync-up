@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import YouTubeVideo from 'stateful-react-youtube'
+import { Panel } from 'react-bootstrap'
 import { socket } from '../index'
 import * as videoActions from '../actions/videoActions'
 
@@ -33,16 +34,21 @@ export class VideoContainer extends Component {
   }
 
   render() {
+    let video
+    if (this.props.videoId) video = <YouTubeVideo
+      width={this.props.width}
+      videoId={this.props.videoId}
+      shouldPrestart={this.props.shouldPrestart}
+      position={this.props.position}
+      playing={this.props.playing}
+      onProgress={this.setPosition}
+      onPlayingChange={this.onPlayingChange}
+    />
+  else video = <p>Waiting for input video...</p>
     return (
-      <YouTubeVideo
-        width={this.props.width}
-        videoId={this.props.videoId}
-        shouldPrestart={this.props.shouldPrestart}
-        position={this.props.position}
-        playing={this.props.playing}
-        onProgress={this.setPosition}
-        onPlayingChange={this.onPlayingChange}
-      />
+      <Panel>
+        {video}
+      </Panel>
     )
   }
 }
