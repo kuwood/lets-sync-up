@@ -6,8 +6,8 @@ const Jumbo = (props) => {
     <Jumbotron>
       <h1>Experience Youtube together.</h1>
       <p>Let's sync up lets you syncronize playback of youtube videos between users in a room.</p>
-      <p>To get started use the "Create a room" link above!</p>
-      <Button>Hide</Button>
+      <p>To get started click "Create a room"</p>
+      <Button bsStyle="primary">Create a room</Button>
     </Jumbotron>
   )
 }
