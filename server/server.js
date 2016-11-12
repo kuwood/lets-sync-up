@@ -1,3 +1,4 @@
+'use strict'
 var http = require('http');
 var express = require('express');
 var socket_io = require('socket.io');
