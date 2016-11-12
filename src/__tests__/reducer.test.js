@@ -142,6 +142,7 @@ describe('roomReducer', () => {
     expect(
       roomReducer(undefined, {})
     ).toEqual({
+      id: null,
       isReady: false,
       ownerReady: false
     })
@@ -154,6 +155,7 @@ describe('roomReducer', () => {
         isReady: true
       })
     ).toEqual({
+      id: null,
       isReady: true,
       ownerReady: false
     })

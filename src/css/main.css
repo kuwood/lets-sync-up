@@ -15,9 +15,41 @@ body {
   height: 100%;
 }
 
-.App {
+.inline-block {
+  display: inline-block;
+  margin-right: 5px
+}
+
+.text-center {
   text-align: center;
+}
+
+.App {
+  /*text-align: center;*/
   height: 100%;
+}
+
+.jumbo-wrap {
+  margin-top: -20px;
+  background-color: #eee;
+}
+
+.vid-source {
+  display: inline-block;
+  margin-right: 20px;
+  text-align: center;
+}
+
+.vid-container {
+  background-color: #fff;
+  margin-bottom: -2px;
+  border: 1px solid #eee;
+  border-radius: 2px;
+  height: 320px;
+}
+.vid-container h2 {
+  text-align: center;
+  line-height: 320px;
 }
 
 .App-header {

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import YouTubeVideo from 'stateful-react-youtube'
 import { Panel } from 'react-bootstrap'
-import { socket } from '../index'
+
 import * as videoActions from '../actions/videoActions'
 
 export class VideoContainer extends Component {
@@ -10,11 +10,6 @@ export class VideoContainer extends Component {
     super(props)
     this.onPlayingChange = this.onPlayingChange.bind(this)
     this.setPosition = this.setPosition.bind(this)
-
-    socket.on('setVideo', id => {
-      console.log('setting id', id);
-      this.props.dispatch(videoActions.setVideo(id))
-    })
   }
 
   setPosition(position) {
@@ -44,11 +39,11 @@ export class VideoContainer extends Component {
       onProgress={this.setPosition}
       onPlayingChange={this.onPlayingChange}
     />
-  else video = <p>Waiting for input video...</p>
+  else video = <h2>Waiting for input video...</h2>
     return (
-      <Panel>
+      <div className="vid-container">
         {video}
-      </Panel>
+      </div>
     )
   }
 }
