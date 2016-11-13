@@ -9,4 +9,4 @@ cache:
   directories:
     - node_modules
 script:
-  - npm test
+  - CI=true npm test
