@@ -93,7 +93,7 @@ body {
 
 .chat-container {
   display: inline-block;
-  height: calc(100vh - 243px);
+  height: calc(100vh - 668px);
   width: 100%;
   vertical-align: text-bottom;
 }

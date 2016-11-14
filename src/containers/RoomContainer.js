@@ -3,8 +3,6 @@ import { connect } from 'react-redux'
 import { Grid, Row, Col } from 'react-bootstrap'
 import { socket } from '../index'
 
-// import Jumbo from '../components/Jumbo'
-
 import VideoContainer from './VideoContainer'
 import PlayerControls from '../components/PlayerControls'
 import Chat from '../components/Chat'
@@ -15,7 +13,6 @@ class RoomContainer extends Component {
   constructor(props) {
     super(props)
     socket.emit('joinRoom', this.props.params.roomName)
-    // this.props.dispatch(roomActions.roomId(this.props.params.roomName))
     socket.on('setVideo', id => {
       this.props.dispatch(videoActions.setVideo(id))
     })
@@ -48,9 +45,9 @@ class RoomContainer extends Component {
               />
             <p className="stats">Playing: {this.props.video.playing.toString()}</p>
             <p className="stats">{Math.round(this.props.video.position)}ms</p>
+            <Chat />
           </Col>
           <Col xs={12} md={4}>
-            <Chat />
           </Col>
         </Row>
       </Grid>
