@@ -7,17 +7,14 @@ import * as userActions from '../actions/userActions'
 import * as roomActions from '../actions/roomActions'
 import { socket } from '../index'
 
+
 export class PlayerControls extends Component {
   constructor(props) {
     super(props)
     this.setPosition = this.setPosition.bind(this)
     this.toggleReady = this.toggleReady.bind(this)
 
-    socket.on('roomCount', data => {
-      console.log('room count', data)
-    })
     socket.on('roomReady', bool => {
-      console.log('recieve roomReady call as', bool);
       this.props.dispatch(roomActions.roomReady(bool))
     })
     socket.on('isOwner', data => {
@@ -87,7 +84,6 @@ export class PlayerControls extends Component {
       </OverlayTrigger>
       spacer = ' '
       if (!this.props.room.isReady && !this.props.playing) {
-        console.log('room isReady', this.props.room.isReady);
         buttons = <Button disabled>
           Room not ready
         </Button>

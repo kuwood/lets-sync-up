@@ -4,12 +4,11 @@ import { Provider } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import io from 'socket.io-client'
 import store from './store'
-// import Navigation from './components/Navigation'
 import App from './components/App'
 import Jumbo from './components/Jumbo'
 import RoomContainer from './containers/RoomContainer'
 import './css/main.css'
-export let socket = io.connect("http://localhost:8080")
+export let socket = io()
 
 document.addEventListener('DOMContentLoaded', () => {
   render(
