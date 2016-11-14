@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { socket } from '../index'
-import { Panel, Button, Form, FormControl, FormGroup } from 'react-bootstrap'
+import { Button, Form, FormControl, FormGroup } from 'react-bootstrap'
+
 
 
 export class VideoSource extends Component {

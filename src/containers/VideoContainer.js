@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import YouTubeVideo from 'stateful-react-youtube'
-import { Panel } from 'react-bootstrap'
 
 import * as videoActions from '../actions/videoActions'
 
@@ -20,10 +19,8 @@ export class VideoContainer extends Component {
     // disallows using ifram pause/play
     let myPlayer = document.getElementById('widget2')
     if (!this.props.room.ownerReady) {
-      console.log('owner not ready should pause');
       myPlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
     } else {
-      console.log('owner is ready should play');
       myPlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*')
     }
   }

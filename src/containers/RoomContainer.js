@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Grid, Row, Col, Panel } from 'react-bootstrap'
+import { Grid, Row, Col } from 'react-bootstrap'
+import { socket } from '../index'
+
 // import Jumbo from '../components/Jumbo'
 
 import VideoContainer from './VideoContainer'
 import PlayerControls from '../components/PlayerControls'
 import Chat from '../components/Chat'
-import { socket } from '../index'
 import * as roomActions from '../actions/roomActions'
 import * as videoActions from '../actions/videoActions'
 
@@ -16,7 +17,6 @@ class RoomContainer extends Component {
     socket.emit('joinRoom', this.props.params.roomName)
     // this.props.dispatch(roomActions.roomId(this.props.params.roomName))
     socket.on('setVideo', id => {
-      console.log('setting id', id);
       this.props.dispatch(videoActions.setVideo(id))
     })
   }

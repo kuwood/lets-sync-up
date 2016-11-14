@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import { socket } from '../index'
-import { browserHistory} from 'react-router'
-import * as roomActions from '../actions/roomActions'
-import { Jumbotron, Button, Col } from 'react-bootstrap'
+import { Jumbotron, Button } from 'react-bootstrap'
+
 
 export class Jumbo extends Component {
   constructor(props) {
