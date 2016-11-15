@@ -45,7 +45,7 @@ class RoomContainer extends Component {
               />
             <p className="stats">Playing: {this.props.video.playing.toString()}</p>
             <p className="stats">{Math.round(this.props.video.position)}ms</p>
-            <Chat />
+            <Chat room={this.props.room} chat={this.props.chat}/>
           </Col>
           <Col xs={12} md={4}>
           </Col>
@@ -59,7 +59,8 @@ let mapStateToProps = (state, props) => {
   return {
     video: state.video,
     user: state.user,
-    room: state.room
+    room: state.room,
+    chat: state.chat
   }
 }
 

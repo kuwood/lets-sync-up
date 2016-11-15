@@ -58,7 +58,15 @@ var state = function() {
     playing: false,
     position: 0
   };
+  this.chat = {
+    messages: []
+  }
 };
+
+var message = function(user, message) {
+  this.user = user;
+  this.message = message;
+}
 
 app.get('*', function (request, response){
   response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
@@ -202,6 +210,16 @@ io.on('connection', socket => {
     leaveRoom(socket)
   })
 
+  // chatttt
+  socket.on('newMessage', data => {
+    let room = data.room
+    let chatMessage = new message(socket.id, data.message)
+    let roomChat = roomStates[room].chat.messages
+    console.log(chatMessage);
+    roomStates[room].chat.messages.push(chatMessage)
+    console.log(roomChat, 'is room chat');
+    io.sockets.in(room).emit('chatMessage', roomChat[roomChat.length - 1])
+  })
 
   socket.on('disconnect', data => {
     console.log('A disconnect happened');

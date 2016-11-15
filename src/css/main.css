@@ -24,6 +24,14 @@ body {
   text-align: center;
 }
 
+.chat-input-wrap {
+  margin-bottom: -15px;
+}
+
+.chat-input {
+  width: calc(100% - 69px);
+}
+
 .App {
   /*text-align: center;*/
   height: 100%;
@@ -96,6 +104,9 @@ body {
   height: calc(100vh - 668px);
   width: 100%;
   vertical-align: text-bottom;
+  overflow-x: hidden;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .chat-container p {
