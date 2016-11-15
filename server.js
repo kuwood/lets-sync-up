@@ -1,8 +1,10 @@
+/*eslint no-console: */
+// eslint-disable-next-line
 'use strict'
 // .includes polyfill
 if (!Array.prototype.includes) {
+  // eslint-disable-next-line
   Array.prototype.includes = function(searchElement /*, fromIndex*/) {
-    'use strict';
     if (this == null) {
       throw new TypeError('Array.prototype.includes called on null or undefined');
     }
@@ -24,6 +26,7 @@ if (!Array.prototype.includes) {
     while (k < len) {
       currentElement = O[k];
       if (searchElement === currentElement ||
+         // eslint-disable-next-line
          (searchElement !== searchElement && currentElement !== currentElement)) { // NaN !== NaN
         return true;
       }
