@@ -155,7 +155,9 @@ io.on('connection', socket => {
     roomStates[roomId].room.count += 1;
     // set alias
     if (!roomStates[roomId].users[socket.id].alias) {
-      socket.emit('requestAlias')
+      let newAlias = `user${roomStates[roomId].room.count}`
+      roomStates[roomId].users[socket.id].alias = newAlias
+      socket.emit('requestAlias', newAlias)
     }
     // handle owner re assignment
     if (roomStates[roomId].room.count === 1) {
@@ -168,6 +170,11 @@ io.on('connection', socket => {
     console.log(roomStates[roomId], 'THIS WHOLE ROOMS STATE');
     roomReady(roomStates[roomId])
   });
+
+  socket.on('setAlias', aliasData => {
+    let roomId = aliasData.roomId
+    roomStates[roomId].users[socket.id].alias = aliasData.name
+  })
 
   // assign videoId by passing id(video) and room(id)
   socket.on('videoId', data => {
@@ -216,7 +223,8 @@ io.on('connection', socket => {
   // chatttt
   socket.on('newMessage', data => {
     let room = data.room
-    let chatMessage = new message(socket.id, data.message)
+    let user = roomStates[room].users[socket.id].alias
+    let chatMessage = new message(user, data.message)
     let roomChat = roomStates[room].chat.messages
     console.log(chatMessage);
     roomStates[room].chat.messages.push(chatMessage)

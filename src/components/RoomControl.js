@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ReactDOM from 'react-dom'
 import { Glyphicon, Modal, Button, Form, FormControl } from 'react-bootstrap'
-import AliasModal from './AliasModal'
+import { socket } from '../index'
 import * as userActions from '../actions/userActions'
 
 class RoomControl extends Component {
@@ -11,6 +11,10 @@ class RoomControl extends Component {
     this.handleAlias = this.handleAlias.bind(this)
     this.toggleAlias = this.toggleAlias.bind(this)
     this.state = {showModal: false}
+    socket.on('requestAlias', defaultAlias => {
+      this.props.dispatch(userActions.alias(defaultAlias))
+      this.setState({showModal: true})
+    })
   }
 
   toggleAlias() {
@@ -20,7 +24,9 @@ class RoomControl extends Component {
   handleAlias(e) {
     e.preventDefault()
     let newAlias = ReactDOM.findDOMNode(this.inputAlias).value
+    let aliasData = {roomId: this.props.roomId, name: newAlias}
     this.props.dispatch(userActions.alias(newAlias))
+    socket.emit('setAlias', aliasData)
     this.setState({showModal: this.state.false})
   }
 
