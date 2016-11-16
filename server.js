@@ -77,7 +77,6 @@ app.get('*', function (request, response){
 
 function leaveRoom(socket) {
   let rooms = socket.rooms
-  console.log(socket, 'MASsIVE DISCONNECT SOCKET OBJECT');
   console.log(rooms, 'SOCKET IS LEAVING FROM THESE ROOMS');
   for (let room in rooms) {
     if (room.substring(0,4) === 'room') {
@@ -142,9 +141,6 @@ io.on('connection', socket => {
     roomStates[room].users[socket.id] = {
       isOwner: true
     };
-    // roomStates[room].room.count += 1;
-    // socket.emit('isOwner', true);
-    // roomReady(roomStates[room])
     console.log(`user joined ${room}. roomCount: ${roomStates[room].room.count}, room ready ${roomStates[room].room.ready}`);
   });
 
@@ -157,7 +153,11 @@ io.on('connection', socket => {
       isReady: false
     };
     roomStates[roomId].room.count += 1;
-    // handle owner assignment
+    // set alias
+    if (!roomStates[roomId].users[socket.id].alias) {
+      socket.emit('requestAlias')
+    }
+    // handle owner re assignment
     if (roomStates[roomId].room.count === 1) {
       socket.emit('isOwner', true);
       roomStates[roomId].users[socket.id].isOwner = true;

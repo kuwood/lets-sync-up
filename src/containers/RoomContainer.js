@@ -49,7 +49,7 @@ class RoomContainer extends Component {
             <Chat room={this.props.room} chat={this.props.chat}/>
           </Col>
           <Col xs={12} md={2}>
-            <RoomControl alias="kwood" roomId={this.props.room.id}/>
+            <RoomControl alias={this.props.user.alias} roomId={this.props.room.id}/>
           </Col>
         </Row>
       </Grid>
