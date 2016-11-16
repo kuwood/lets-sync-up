@@ -6,6 +6,7 @@ import { socket } from '../index'
 import VideoContainer from './VideoContainer'
 import PlayerControls from '../components/PlayerControls'
 import Chat from '../components/Chat'
+import RoomControl from '../components/RoomControl'
 import * as roomActions from '../actions/roomActions'
 import * as videoActions from '../actions/videoActions'
 
@@ -26,7 +27,7 @@ class RoomContainer extends Component {
     return (
       <Grid>
         <Row className="show-grid">
-          <Col xs={12} md={8}>
+          <Col xs={12} md={10}>
               <VideoContainer
                 width={"100%"}
                 height={"100%"}
@@ -47,7 +48,8 @@ class RoomContainer extends Component {
             <p className="stats">{Math.round(this.props.video.position)}ms</p>
             <Chat room={this.props.room} chat={this.props.chat}/>
           </Col>
-          <Col xs={12} md={4}>
+          <Col xs={12} md={2}>
+            <RoomControl alias="kwood" roomId={this.props.room.id}/>
           </Col>
         </Row>
       </Grid>

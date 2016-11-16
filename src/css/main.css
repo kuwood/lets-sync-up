@@ -10,6 +10,12 @@ body {
   height: 100%;
 }
 
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
 #root {
   box-sizing: inherit;
   height: 100%;
@@ -18,6 +24,15 @@ body {
 .inline-block {
   display: inline-block;
   margin-right: 5px
+}
+
+.users-control {
+  height: calc(100vh - 56px);
+}
+
+.user-ul, user-li {
+  padding: 0;
+  list-style: none;
 }
 
 .text-center {
