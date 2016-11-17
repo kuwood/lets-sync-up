@@ -57,7 +57,13 @@ class RoomControl extends Component {
         <h1><small>User list</small></h1>
         <ul className="user-ul">
           {this.props.users.map((user, index) => {
-            return <li key={index} className="user-li"><a>{user.alias}</a></li>
+            if (user.isOwner) {
+              return <li key={index} className="user-li"><Glyphicon glyph="king" /> <a>{user.alias}</a></li>
+            } else if (user.isReady) {
+              return <li key={index} className="user-li"><Glyphicon glyph="thumbs-up" /> <a>{user.alias}</a></li>
+            } else {
+              return <li key={index} className="user-li"><Glyphicon glyph="thumbs-down" /> <a>{user.alias}</a></li>
+            }
           })}
         </ul>
       </div>

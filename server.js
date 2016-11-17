@@ -80,6 +80,7 @@ function leaveRoom(socket) {
   console.log(rooms, 'SOCKET IS LEAVING FROM THESE ROOMS');
   for (let room in rooms) {
     if (room.substring(0,4) === 'room') {
+      // owner flag for the leaving socket
       let isOwner = false
       if (roomStates[room].users[socket.id].isOwner) {
         isOwner = true
@@ -133,7 +134,7 @@ function roomReady(roomState) {
 
 function updateClientUsersList(room) {
   let usersList = room.users
-  console.log(room.users, 'server side userss');
+  console.log(usersList, 'server side userss');
   io.sockets.in(room.room.id).emit('users', usersList)
 }
 
@@ -168,6 +169,11 @@ io.on('connection', socket => {
       isReady: false
     };
     roomStates[roomId].room.count += 1;
+    // handle owner re assignment
+    if (roomStates[roomId].room.count === 1) {
+      socket.emit('isOwner', true);
+      roomStates[roomId].users[socket.id].isOwner = true;
+    };
     // set alias
     if (!roomStates[roomId].users[socket.id].alias) {
       let newAlias = `user${roomStates[roomId].room.count}`
@@ -175,11 +181,6 @@ io.on('connection', socket => {
       socket.emit('requestAlias', newAlias)
       updateClientUsersList(roomStates[roomId])
     }
-    // handle owner re assignment
-    if (roomStates[roomId].room.count === 1) {
-      socket.emit('isOwner', true);
-      roomStates[roomId].users[socket.id].isOwner = true;
-    };
     // pass video
     if (roomStates[roomId].video.id) socket.emit('setVideo', roomStates[roomId].video.id)
     // room ready check
@@ -207,6 +208,7 @@ io.on('connection', socket => {
     console.log(socket.id, 'isReady ', data, 'room ready ', roomStates[data.room].room.ready);
     roomStates[data.room].users[socket.id].isReady = data.isReady;
     roomReady(roomStates[data.room]);
+    updateClientUsersList(roomStates[data.room])
   });
 
   // handle ownerReady

@@ -24,6 +24,7 @@ function roomReducer(state = initialState, action) {
     case roomActions.USERS:
       let list = []
       for (let index in action.users) {
+        console.log(action.users[index]);
         let user = action.users[index]
         let temp = list[0]
         if (user.isOwner) {
@@ -33,6 +34,7 @@ function roomReducer(state = initialState, action) {
           list.push(user)
         }
       }
+      console.log(list);
       return Object.assign({}, state, {
         users: list
       })
