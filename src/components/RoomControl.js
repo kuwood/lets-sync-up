@@ -51,7 +51,9 @@ class RoomControl extends Component {
     return (
       <div id="users-control">
         {aliasModal}
-        <a onClick={this.toggleAlias}><h3 className="user-alias inline-block">{this.props.alias}</h3><Glyphicon glyph="edit" /></a>
+        <OverlayTrigger placement="top" overlay={<Tooltip>Click to change alias</Tooltip>}>
+          <a onClick={this.toggleAlias}><h3 className="user-alias inline-block">{this.props.alias}</h3><Glyphicon glyph="edit" /></a>
+        </OverlayTrigger>
         <p>Room Id: {this.props.roomId}</p>
         <h1><small>User list</small></h1>
         <ul className="user-ul">
