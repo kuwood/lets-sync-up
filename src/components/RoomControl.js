@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 import { Glyphicon, Modal, Button, Form, FormControl, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { socket } from '../index'
 import * as userActions from '../actions/userActions'
-import IconTooltip from './IconTooltip'
 
 class RoomControl extends Component {
   constructor(props) {
@@ -52,26 +51,53 @@ class RoomControl extends Component {
     return (
       <div id="users-control">
         {aliasModal}
-        <a onClick={this.toggleAlias}><h4 className="inline-block">{this.props.alias}</h4><Glyphicon glyph="edit" /></a>
+        <a onClick={this.toggleAlias}><h3 className="user-alias inline-block">{this.props.alias}</h3><Glyphicon glyph="edit" /></a>
         <p>Room Id: {this.props.roomId}</p>
         <h1><small>User list</small></h1>
         <ul className="user-ul">
           {this.props.users.map((user, index) => {
-            if (user.isOwner) {
-              return (<li key={index} className="user-li">
-                  <OverlayTrigger placement="top" overlay={<Tooltip>Is the Owner</Tooltip>}><Glyphicon glyph="king" /></OverlayTrigger> <a>{user.alias}</a>
-                </li>
-              )
-            } else if (user.isReady) {
-              return (<li key={index} className="user-li">
-                <OverlayTrigger placement="top" overlay={<Tooltip>Is ready</Tooltip>}><Glyphicon glyph="thumbs-up" /></OverlayTrigger> <a>{user.alias}</a>
-                </li>
-              )
+            if (this.props.isOwner) {
+              if (user.isOwner) {
+                return (<li key={index} className="user-li">
+                    <OverlayTrigger placement="top" overlay={<Tooltip>Is the Owner</Tooltip>}><Glyphicon glyph="king" /></OverlayTrigger>
+                    <span className="user-list-alias">{user.alias}</span>
+                  </li>
+                )
+              } else if (user.isReady) {
+                return (<li key={index} className="user-li">
+                  <OverlayTrigger placement="top" overlay={<Tooltip>Is ready</Tooltip>}><Glyphicon glyph="thumbs-up" /></OverlayTrigger>
+                  <span className="user-list-alias">{user.alias}</span>
+                  <OverlayTrigger placement="top" overlay={<Tooltip>Kick user</Tooltip>}><a className="kick"><Glyphicon glyph="remove" /></a></OverlayTrigger>
+                  </li>
+                )
+              } else {
+                return (<li key={index} className="user-li">
+                  <OverlayTrigger placement="top" overlay={<Tooltip>Is not ready</Tooltip>}><Glyphicon glyph="thumbs-down" /></OverlayTrigger>
+                  <span className="user-list-alias">{user.alias}</span>
+                  <OverlayTrigger placement="top" overlay={<Tooltip>Kick user</Tooltip>}><a className="kick"><Glyphicon glyph="remove" /></a></OverlayTrigger>
+                  </li>
+                )
+              }
             } else {
-              return (<li key={index} className="user-li">
-                <OverlayTrigger placement="top" overlay={<Tooltip>Is not ready</Tooltip>}><Glyphicon glyph="thumbs-down" /></OverlayTrigger> <a>{user.alias}</a>
-                </li>
-              )
+              if (user.isOwner) {
+                return (<li key={index} className="user-li">
+                    <OverlayTrigger placement="top" overlay={<Tooltip>Is the Owner</Tooltip>}><Glyphicon glyph="king" /></OverlayTrigger>
+                    <span className="user-list-alias">{user.alias}</span>
+                  </li>
+                )
+              } else if (user.isReady) {
+                return (<li key={index} className="user-li">
+                  <OverlayTrigger placement="top" overlay={<Tooltip>Is ready</Tooltip>}><Glyphicon glyph="thumbs-up" /></OverlayTrigger>
+                  <span className="user-list-alias">{user.alias}</span>
+                  </li>
+                )
+              } else {
+                return (<li key={index} className="user-li">
+                  <OverlayTrigger placement="top" overlay={<Tooltip>Is not ready</Tooltip>}><Glyphicon glyph="thumbs-down" /></OverlayTrigger>
+                  <span className="user-list-alias">{user.alias}</span>
+                  </li>
+                )
+              }
             }
           })}
         </ul>
