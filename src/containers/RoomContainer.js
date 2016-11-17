@@ -17,6 +17,9 @@ class RoomContainer extends Component {
     socket.on('setVideo', id => {
       this.props.dispatch(videoActions.setVideo(id))
     })
+    socket.on('users', usersList => {
+      this.props.dispatch(roomActions.users(usersList))
+    })
   }
 
   componentDidMount() {
@@ -49,7 +52,7 @@ class RoomContainer extends Component {
             <Chat room={this.props.room} chat={this.props.chat}/>
           </Col>
           <Col xs={12} md={2}>
-            <RoomControl alias={this.props.user.alias} roomId={this.props.room.id}/>
+            <RoomControl alias={this.props.user.alias} roomId={this.props.room.id} users={this.props.room.users}/>
           </Col>
         </Row>
       </Grid>

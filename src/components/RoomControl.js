@@ -49,23 +49,16 @@ class RoomControl extends Component {
     </Modal>
     </Form>
     return (
-      // TODO: HANDLE USERS READY STATUS.
+      // TODO: map user list
       <div id="users-control">
         {aliasModal}
         <a onClick={this.toggleAlias}><h4 className="inline-block">{this.props.alias}</h4><Glyphicon glyph="edit" /></a>
         <p>Room Id: {this.props.roomId}</p>
         <h1><small>User list</small></h1>
         <ul className="user-ul">
-          <li className="user-li"><a>user</a></li>
-          <li className="user-li"><a>user</a></li>
-          <li className="user-li"><a>user</a></li>
-          <li className="user-li"><a>user</a></li>
-          <li className="user-li"><a>user</a></li>
-          <li className="user-li"><a>user</a></li>
-          <li className="user-li"><a>user</a></li>
-          <li className="user-li"><a>user</a></li>
-          <li className="user-li"><a>user</a></li>
-          <li className="user-li"><a>user</a></li>
+          {this.props.users.map((user, index) => {
+            return <li key={index} className="user-li"><a>{user.alias}</a></li>
+          })}
         </ul>
       </div>
     )

@@ -80,6 +80,10 @@ function leaveRoom(socket) {
   console.log(rooms, 'SOCKET IS LEAVING FROM THESE ROOMS');
   for (let room in rooms) {
     if (room.substring(0,4) === 'room') {
+      let isOwner = false
+      if (roomStates[room].users[socket.id].isOwner) {
+        isOwner = true
+      }
       // delete user from room
       roomStates[room].room.count -= 1;
       delete roomStates[room].users[socket.id];
@@ -87,6 +91,10 @@ function leaveRoom(socket) {
       // re assign owner
       if (roomStates[room].room.count === 1) {
         io.sockets.in(room).emit('isOwner', true);
+      } else if (isOwner) {
+        let newOwner = Object.keys(roomStates[room].users)[0]
+        roomStates[room].users[newOwner].isOwner = true
+        io.to(newOwner).emit('isOwner', true);
       }
       if (Object.keys(roomStates[room].users).length < 1) {
         delete roomStates[room]
@@ -94,6 +102,7 @@ function leaveRoom(socket) {
         // check room ready status
         roomReady(roomStates[room])
       }
+      updateClientUsersList(roomStates[room])
     }
   }
 }
@@ -120,6 +129,12 @@ function roomReady(roomState) {
     roomState.room.ready = false;
     io.sockets.in(roomState.room.id).emit('roomReady', roomState.room.ready);
   };
+}
+
+function updateClientUsersList(room) {
+  let usersList = room.users
+  console.log(room.users, 'server side userss');
+  io.sockets.in(room.room.id).emit('users', usersList)
 }
 
 io.on('connection', socket => {
@@ -158,6 +173,7 @@ io.on('connection', socket => {
       let newAlias = `user${roomStates[roomId].room.count}`
       roomStates[roomId].users[socket.id].alias = newAlias
       socket.emit('requestAlias', newAlias)
+      updateClientUsersList(roomStates[roomId])
     }
     // handle owner re assignment
     if (roomStates[roomId].room.count === 1) {
@@ -174,6 +190,7 @@ io.on('connection', socket => {
   socket.on('setAlias', aliasData => {
     let roomId = aliasData.roomId
     roomStates[roomId].users[socket.id].alias = aliasData.name
+    updateClientUsersList(roomStates[roomId])
   })
 
   // assign videoId by passing id(video) and room(id)
@@ -216,7 +233,7 @@ io.on('connection', socket => {
   })
 
   // handle disconnects
-  socket.on('disconnecting', ()=> {
+  socket.on('disconnecting', data => {
     leaveRoom(socket)
   })
 
