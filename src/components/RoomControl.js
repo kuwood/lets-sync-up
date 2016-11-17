@@ -54,7 +54,9 @@ class RoomControl extends Component {
         <OverlayTrigger placement="top" overlay={<Tooltip>Click to change alias</Tooltip>}>
           <a onClick={this.toggleAlias}><h3 className="user-alias inline-block">{this.props.alias}</h3><Glyphicon glyph="edit" /></a>
         </OverlayTrigger>
-        <p>Room Id: {this.props.roomId}</p>
+        <OverlayTrigger placement="top" overlay={<Tooltip>Current room id</Tooltip>}>
+          <p>{this.props.roomId}</p>
+        </OverlayTrigger>
         <h1><small>User list</small></h1>
         <ul className="user-ul">
           {this.props.users.map((user, index) => {
