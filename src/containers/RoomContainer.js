@@ -48,8 +48,6 @@ class RoomContainer extends Component {
                 room={this.props.room}
                 video={this.props.video}
               />
-            <p className="stats">Playing: {this.props.video.playing.toString()}</p>
-            <p className="stats">{Math.round(this.props.video.position)}ms</p>
             <Chat room={this.props.room} chat={this.props.chat}/>
           </Col>
           <Col xs={12} md={2}>
