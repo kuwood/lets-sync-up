@@ -29,6 +29,7 @@ export class VideoContainer extends Component {
     let video
     if (this.props.videoId) video = <YouTubeVideo
       width={this.props.width}
+      height={this.props.height}
       videoId={this.props.videoId}
       shouldPrestart={this.props.shouldPrestart}
       position={this.props.position}
