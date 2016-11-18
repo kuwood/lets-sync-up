@@ -19,6 +19,9 @@ export class Navigation extends Component {
       browserHistory.push(`/room/${data}`);
       this.props.dispatch(roomActions.roomId(data));
     })
+    socket.on('sendHome', () => {
+      browserHistory.push(`/`)
+    })
   }
 
   createRoom() {
