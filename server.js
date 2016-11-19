@@ -75,39 +75,70 @@ app.get('*', function (request, response){
   response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
 })
 
-function leaveRoom(socket) {
-  let rooms = socket.rooms
-  console.log(rooms, 'SOCKET IS LEAVING FROM THESE ROOMS');
-  for (let room in rooms) {
-    if (room.substring(0,4) === 'room') {
-      // owner flag for the leaving socket
-      let isOwner = false
-      if (roomStates[room].users[socket.id].isOwner) {
-        isOwner = true
-      }
-      // delete user from room
-      roomStates[room].room.count -= 1;
-      delete roomStates[room].users[socket.id];
-      console.log('user disconnected. roomCount:', roomStates[room].room.count);
-      if (Object.keys(roomStates[room].users).length < 1) {
-        delete roomStates[room]
-      } else if (Object.keys(roomStates[room].users).length === 1) {
-        let newOwner = Object.keys(roomStates[room].users)[0]
-        roomStates[room].users[newOwner].isOwner = true
-        io.sockets.in(room).emit('isOwner', true);
-        updateClientUsersList(roomStates[room])
-        roomReady(roomStates[room])
-      } else {
-        if (isOwner) {
+function leaveRoom(socket, customRoom) {
+  if (!customRoom) {
+    let rooms = socket.rooms
+    console.log(rooms, 'SOCKET IS LEAVING FROM THESE ROOMS');
+    for (let room in rooms) {
+      if (room.substring(0,4) === 'room') {
+        // owner flag for the leaving socket
+        let isOwner = false
+        if (roomStates[room].users[socket.id].isOwner) {
+          isOwner = true
+        }
+        // delete user from room
+        roomStates[room].room.count -= 1;
+        delete roomStates[room].users[socket.id];
+        console.log('user disconnected. roomCount:', roomStates[room].room.count);
+        if (Object.keys(roomStates[room].users).length < 1) {
+          delete roomStates[room]
+        } else if (Object.keys(roomStates[room].users).length === 1) {
           let newOwner = Object.keys(roomStates[room].users)[0]
           roomStates[room].users[newOwner].isOwner = true
-          io.to(newOwner).emit('isOwner', true);
+          io.sockets.in(room).emit('isOwner', true);
+          updateClientUsersList(roomStates[room])
+          roomReady(roomStates[room])
+        } else {
+          if (isOwner) {
+            let newOwner = Object.keys(roomStates[room].users)[0]
+            roomStates[room].users[newOwner].isOwner = true
+            io.to(newOwner).emit('isOwner', true);
+          }
+          updateClientUsersList(roomStates[room])
+          roomReady(roomStates[room])
         }
-        updateClientUsersList(roomStates[room])
-        roomReady(roomStates[room])
       }
     }
+  } else {
+    let room = customRoom
+    // owner flag for the leaving socket
+    let isOwner = false
+    if (roomStates[room].users[socket.id].isOwner) {
+      isOwner = true
+    }
+    // delete user from room
+    roomStates[room].room.count -= 1;
+    delete roomStates[room].users[socket.id];
+    console.log('user disconnected. roomCount:', roomStates[room].room.count);
+    if (Object.keys(roomStates[room].users).length < 1) {
+      delete roomStates[room]
+    } else if (Object.keys(roomStates[room].users).length === 1) {
+      let newOwner = Object.keys(roomStates[room].users)[0]
+      roomStates[room].users[newOwner].isOwner = true
+      io.sockets.in(room).emit('isOwner', true);
+      updateClientUsersList(roomStates[room])
+      roomReady(roomStates[room])
+    } else {
+      if (isOwner) {
+        let newOwner = Object.keys(roomStates[room].users)[0]
+        roomStates[room].users[newOwner].isOwner = true
+        io.to(newOwner).emit('isOwner', true);
+      }
+      updateClientUsersList(roomStates[room])
+      roomReady(roomStates[room])
+    }
   }
+
 }
 
 function roomReady(roomState) {
@@ -157,38 +188,48 @@ io.on('connection', socket => {
     socket.emit('roomRedirect', room);
     // add new user to state on channel join
     roomStates[room].users[socket.id] = {
-      isOwner: true,
       id: socket.id
     };
     console.log(`user joined ${room}. roomCount: ${roomStates[room].room.count}, room ready ${roomStates[room].room.ready}`);
   });
 
   socket.on('joinRoom', roomId => {
-    // if not in room join the room
+    // create room if it does not exist and add socket to users
+    if (!roomStates[roomId]) {
+      roomStates[roomId] = new state()
+      roomStates[roomId].room.id = roomId
+      console.log(roomStates[roomId]);
+      roomStates[roomId].users[socket.id] = {
+        id: socket.id
+      };
+    }
+    // check sockets rooms for roomId if not there join room
     if (!Object.keys(socket.rooms).includes(roomId)) socket.join(roomId);
     // add new user to state on channel join
     console.log(roomId, 'is roomId');
-    roomStates[roomId].users[socket.id] = {
-      isReady: false
-    };
-    roomStates[roomId].users[socket.id].id = socket.id
+    if (!roomStates[roomId].users[socket.id]) {
+      roomStates[roomId].users[socket.id] = {
+        id: socket.id,
+        isReady: false
+      }
+    }
     roomStates[roomId].room.count += 1;
     // handle owner re assignment
     if (roomStates[roomId].room.count === 1) {
       socket.emit('isOwner', true);
       roomStates[roomId].users[socket.id].isOwner = true;
-    };
+    }
     // set alias
     if (!roomStates[roomId].users[socket.id].alias) {
       let newAlias = `user${roomStates[roomId].room.count}`
       roomStates[roomId].users[socket.id].alias = newAlias
       socket.emit('requestAlias', newAlias)
-      updateClientUsersList(roomStates[roomId])
     }
     // pass video
     if (roomStates[roomId].video.id) socket.emit('setVideo', roomStates[roomId].video.id)
     // room ready check
     console.log(roomStates[roomId], 'THIS WHOLE ROOMS STATE');
+    updateClientUsersList(roomStates[roomId])
     roomReady(roomStates[roomId])
   });
 
@@ -233,17 +274,39 @@ io.on('connection', socket => {
   // handle leaving room/room change
   socket.on('leaveRoom', roomId => {
     socket.leave(roomId)
-    leaveRoom(socket)
+    if (roomId.substring(0,4) === 'room') {
+      leaveRoom(socket)
+    } else {
+      leaveRoom(socket, roomId)
+    }
   })
 
   // handle disconnects
   socket.on('disconnecting', data => {
-    leaveRoom(socket)
+    let rooms = socket.rooms
+    let customRoom
+    for (let room in rooms) {
+      if (rooms.hasOwnProperty(room)) {
+        if (room !== socket.id && room.substring(0,4) !== 'room') {
+          customRoom = room
+        }
+      }
+    }
+    console.log(rooms, '**************************');
+    if (customRoom) {
+      leaveRoom(socket, customRoom)
+    } else {
+      leaveRoom(socket)
+    }
   })
 
   socket.on('kickUser', user => {
     io.sockets.connected[user.id].leave(user.room)
-    leaveRoom(io.sockets.connected[user.id])
+    if (user.room.substring(0,4) === 'room') {
+      leaveRoom(io.sockets.connected[user.id])
+    } else {
+      leaveRoom(io.sockets.connected[user.id], user.room)
+    }
     io.to(user.id).emit('sendHome')
     roomReady(roomStates[user.room])
   })

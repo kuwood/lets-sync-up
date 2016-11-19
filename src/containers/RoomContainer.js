@@ -18,7 +18,6 @@ class RoomContainer extends Component {
       this.props.dispatch(videoActions.setVideo(id))
     })
     socket.on('users', usersList => {
-      console.log(usersList)
       this.props.dispatch(roomActions.users(usersList))
     })
   }
