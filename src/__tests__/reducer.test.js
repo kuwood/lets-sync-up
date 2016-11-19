@@ -1,9 +1,11 @@
 import * as videoActions from '../actions/videoActions'
 import * as userActions from '../actions/userActions'
 import * as roomActions from '../actions/roomActions'
+import * as chatActions from '../actions/chatActions'
 import videoReducer from '../reducers/videoReducer'
 import userReducer from '../reducers/userReducer'
 import roomReducer from '../reducers/roomReducer'
+import chatReducer from '../reducers/chatReducer'
 
 describe('videoReducer', () => {
   it('should return the initial state', () => {
@@ -97,6 +99,19 @@ describe('videoReducer', () => {
       position: position
     })
   })
+
+  it('handle SET_VIDEO', () => {
+    expect(
+      videoReducer(undefined, {
+        type: videoActions.SET_VIDEO,
+        id: "abcd"
+      })
+    ).toEqual({
+      id: "abcd",
+      playing: false,
+      position: 0
+    })
+  })
 })
 
 describe('userReducer', () => {
@@ -137,6 +152,32 @@ describe('userReducer', () => {
       isReady: false
     })
   })
+
+  it('should handle IS_OWNER', () => {
+    expect(
+      userReducer(undefined, {
+        type: userActions.IS_OWNER,
+        isOwner: true
+      })
+    ).toEqual({
+      alias: null,
+      isOwner: true,
+      isReady: false
+    })
+  })
+
+  it('should handle ALIAS', () => {
+    expect(
+      userReducer(undefined, {
+        type: userActions.ALIAS,
+        alias: 'cool guy'
+      })
+    ).toEqual({
+      alias: 'cool guy',
+      isOwner: false,
+      isReady: false
+    })
+  })
 })
 
 describe('roomReducer', () => {
@@ -162,6 +203,70 @@ describe('roomReducer', () => {
       isReady: true,
       ownerReady: false,
       users: []
+    })
+  })
+
+  it('should handle OWNER_READY', () => {
+    expect(
+      roomReducer(undefined, {
+        type: roomActions.OWNER_READY,
+        ownerReady: true
+      })
+    ).toEqual({
+      id: null,
+      isReady: false,
+      ownerReady: true,
+      users: []
+    })
+  })
+
+  it('should handle ROOM_ID', () => {
+    expect(
+      roomReducer(undefined, {
+        type: roomActions.ROOM_ID,
+        id: '123'
+      })
+    ).toEqual({
+      id: '123',
+      isReady: false,
+      ownerReady: false,
+      users: []
+    })
+  })
+
+  it('should handle USERS', () => {
+    expect(
+      roomReducer(undefined, {
+        type: roomActions.USERS,
+        users: {"abcd": {"1234": true}, "efgh": {"5678": true, "isOwner": true}}
+      })
+    ).toEqual({
+      id: null,
+      isReady: false,
+      ownerReady: false,
+      users: [{"5678": true, "isOwner": true},{"1234": true}]
+    })
+  })
+})
+
+describe('chatReducer', () => {
+  it('should return the initial state', () => {
+    expect(
+      chatReducer(undefined, {})
+    ).toEqual({
+      messages: []
+    })
+  })
+
+  it('should handle NEW_MESSAGE', () => {
+    expect(
+      chatReducer(undefined, {
+        type: chatActions.NEW_MESSAGE,
+        user: 'user1',
+        message: 'rocks'
+      })
+    ).toEqual({
+      messages: [{user: 'user1', message: 'rocks'}]
     })
   })
 })
