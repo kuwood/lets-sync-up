@@ -104,6 +104,7 @@ describe('userReducer', () => {
     expect(
       userReducer(undefined, {})
     ).toEqual({
+      alias: null,
       isOwner: false,
       isReady: false
     })
@@ -116,6 +117,7 @@ describe('userReducer', () => {
         isReady: true
       })
     ).toEqual({
+      alias: null,
       isOwner: false,
       isReady: true
     })
@@ -144,7 +146,8 @@ describe('roomReducer', () => {
     ).toEqual({
       id: null,
       isReady: false,
-      ownerReady: false
+      ownerReady: false,
+      users: []
     })
   })
 
@@ -157,7 +160,8 @@ describe('roomReducer', () => {
     ).toEqual({
       id: null,
       isReady: true,
-      ownerReady: false
+      ownerReady: false,
+      users: []
     })
   })
 })
