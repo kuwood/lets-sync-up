@@ -10,6 +10,12 @@ body {
   height: 100%;
 }
 
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
 #root {
   box-sizing: inherit;
   height: 100%;
@@ -20,8 +26,39 @@ body {
   margin-right: 5px
 }
 
+.users-control {
+  height: calc(100vh - 56px);
+}
+
+.user-alias {
+  color: #333333;
+}
+
+.user-ul, user-li {
+  padding: 0;
+  list-style: none;
+}
+
+.user-list-alias {
+  color: #333333;
+  font-size: 1.2em;
+  padding: 0 5px 0 5px;
+}
+
+.kick {
+  color: #c20000;
+}
+
 .text-center {
   text-align: center;
+}
+
+.chat-input-wrap {
+  margin-bottom: -15px;
+}
+
+.chat-input {
+  width: calc(100% - 69px);
 }
 
 .App {
@@ -45,11 +82,11 @@ body {
   margin-bottom: -2px;
   border: 1px solid #eee;
   border-radius: 2px;
-  height: 320px;
+  height: 400px;
 }
 .vid-container h2 {
   text-align: center;
-  line-height: 320px;
+  padding-top: 160px;
 }
 
 .App-header {
@@ -77,10 +114,6 @@ body {
   padding-left: 20px;
 }
 
-/*.video {
-  margin-bottom: 15px;
-}*/
-
 .video-container {
   display: inline-block;
   font-size: large;
@@ -93,9 +126,13 @@ body {
 
 .chat-container {
   display: inline-block;
-  height: calc(100vh - 243px);
+  min-height: 120px;
+  height: calc(100vh - 720px);
   width: 100%;
   vertical-align: text-bottom;
+  overflow-x: hidden;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .chat-container p {
@@ -104,10 +141,6 @@ body {
 
 .panel-body {
  /*background-color: #f6f6f6;*/
-}
-
-.well {
-  margin-bottom: 0;
 }
 
 .stats {

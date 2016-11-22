@@ -1,6 +1,7 @@
 export const ROOM_READY = 'ROOM_READY'
 export const OWNER_READY = 'OWNER_READY'
 export const ROOM_ID = 'ROOM_ID'
+export const USERS = 'USERS'
 
 export const roomReady = (bool) => {
   return {
@@ -20,5 +21,12 @@ export const roomId = (id) => {
   return {
     type: ROOM_ID,
     id: id
+  }
+}
+
+export const users = (users) => {
+  return {
+    type: USERS,
+    users: users
   }
 }

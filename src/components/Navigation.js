@@ -8,20 +8,23 @@ import { browserHistory} from 'react-router'
 import * as roomActions from '../actions/roomActions'
 import * as videoActions from '../actions/videoActions'
 
-
-
 export class Navigation extends Component {
   constructor(props) {
     super(props)
     this.createRoom = this.createRoom.bind(this)
     this.joinRoom = this.joinRoom.bind(this)
-    socket.on('roomRedirect', data => {
-      browserHistory.push(`/room/${data}`);
-      this.props.dispatch(roomActions.roomId(data));
+    socket.on('roomRedirect', roomId => {
+      browserHistory.push(`/room/${roomId}`);
+      socket.emit('joinRoom', roomId)
+      this.props.dispatch(roomActions.roomId(roomId));
+    })
+    socket.on('sendHome', () => {
+      browserHistory.push(`/`)
     })
   }
 
   createRoom() {
+    if (this.props.room.id) socket.emit('leaveRoom', this.props.room.id)
     socket.emit('createRoom')
   }
 
