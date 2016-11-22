@@ -10,7 +10,7 @@ import RoomControl from '../components/RoomControl'
 import * as roomActions from '../actions/roomActions'
 import * as videoActions from '../actions/videoActions'
 
-class RoomContainer extends Component {
+export class RoomContainer extends Component {
   constructor(props) {
     super(props)
     socket.emit('joinRoom', this.props.params.roomName)

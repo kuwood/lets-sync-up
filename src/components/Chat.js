@@ -6,7 +6,7 @@ import { socket } from '../index'
 import * as chatActions from '../actions/chatActions'
 import ChatMessage from './ChatMessage'
 
-class Chat extends Component {
+export class Chat extends Component {
   constructor(props) {
     super(props)
     socket.on('chatMessage', data => {

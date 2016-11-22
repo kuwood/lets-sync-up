@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ChatMessage = (props) => {
+export const ChatMessage = (props) => {
   return (
     <p>{props.user}: {props.message}</p>
   )

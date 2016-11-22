@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { Form, FormGroup, FormControl, Button } from 'react-bootstrap'
 import { socket } from '../index'
 
-class ChatForm extends Component {
+export class ChatForm extends Component {
   constructor(props) {
     super(props)
     this.handleSubmit = this.handleSubmit.bind(this)
