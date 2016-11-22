@@ -60,9 +60,22 @@ describe('Chat', () => {
   it('renders Chat component without crashing', () => {
     shallow(<Chat room={state.room} chat={state.chat}/>)
   })
+  it('recieves chat messages and dispatches new message', () => {
+    const wrapper = shallow(<Chat room={state.room} chat={state.chat}/>)
+    console.log(wrapper);
+  })
   it('renders ChatForm component without crashing', () => {
-    const wrapper = mount(<ChatForm />)
+    const wrapper = mount(<ChatForm room={{id: '123'}}/>)
     expect(wrapper.find('.chat-input').length).toBe(1)
+
+  })
+  it('handles the ChatForm input and clears after submit', () => {
+    const wrapper = mount(<ChatForm room={{id: '123'}}/>)
+    const input = wrapper.find('input')
+    input.node.value = 'test'
+    input.simulate('change', input)
+    wrapper.find('form').simulate('submit')
+    expect(input.node.value).toBe('')
   })
   it('renders ChatMessage without crashing', () => {
     shallow(<ChatMessage user={state.chat.messages[0].user} message={state.chat.messages[0].message} />)
