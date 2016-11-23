@@ -39,14 +39,168 @@ if (!Array.prototype.includes) {
 var http = require('http');
 var path = require('path')
 var express = require('express');
-var socket_io = require('socket.io');
-
 var app = express();
-app.use(express.static('build'));
-
 var server = http.Server(app);
+var socket_io = require('socket.io');
 var io = socket_io(server);
+var mongoose = require('mongoose');
 
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var jsonParser = bodyParser.json();
+var bcrypt = require('bcryptjs');
+var passport = require('passport')
+var LocalStrategy = require('passport-local').Strategy;
+var config = require('./config');
+
+app.use(express.static('build'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(session({ secret: 'meda' }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+    res.redirect('/');
+}
+
+var User = require('./models/userModel');
+
+passport.use('local', new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      validatePassword(password, user.password, function(error){
+          if(error) {
+              return done(null, false, { message: 'Incorrect password.' });
+          } else {
+              return done(null, user);
+          }
+      });
+    });
+  }
+));
+
+function validatePassword(password, userpassword, callback) {
+    bcrypt.compare(password, userpassword, function(err, isValid) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        callback(null, isValid);
+    });
+}
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    User.findById(id, function(err, user) {
+        done(err, user);
+    });
+});
+
+app.post('/users', jsonParser, function(req, res) {
+    if (!req.body) {
+        return res.status(400).json({
+            message: 'No request body'
+        });
+    }
+    if (!('username' in req.body)) {
+        return res.status(422).json({
+            message: 'Missing field: username'
+        });
+    }
+    var username = req.body.username;
+    if (typeof username !== 'string') {
+        return res.status(422).json({
+            message: 'Incorrect field type: username'
+        });
+    }
+    username = username.trim();
+    if (username === '') {
+        return res.status(422).json({
+            message: 'Incorrect field length: username'
+        });
+    }
+    if (!('password' in req.body)) {
+        return res.status(422).json({
+            message: 'Missing field: password'
+        });
+    }
+    var password = req.body.password;
+    if (typeof password !== 'string') {
+        return res.status(422).json({
+            message: 'Incorrect field type: password'
+        });
+    }
+
+    password = password.trim();
+
+    if (password === '') {
+        return res.status(422).json({
+            message: 'Incorrect field length: password'
+        });
+    }
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) {
+            return res.status(500).json({
+                message: 'Internal server error'
+            });
+        }
+        bcrypt.hash(password, salt, function(err, hash) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Internal server error'
+                });
+            }
+            var user = new User({
+                username: username,
+                password: hash
+            });
+            user.save(function(err) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Internal server error'
+                    });
+                }
+                return res.status(201).json({});
+            });
+        });
+    });
+});
+
+app.get('/profile', isLoggedIn, function(req, res) {
+    User.find({_id: req.user.id}, function(err, user) {
+      if (err) {
+        return res.status(500).json({
+          message: 'Internal Server Error'
+        });
+      }
+      return res.json(user);
+    })
+});
+
+app.post('/login', passport.authenticate('local'), function(req, res) {
+  return res.status(200).json({});
+});
+app.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+});
+
+app.get('*', function (request, response){
+  response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+})
+
+// server state
 var roomStates = {}
 var state = function() {
   this.room = {
@@ -70,10 +224,6 @@ var message = function(user, message) {
   this.user = user;
   this.message = message;
 }
-
-app.get('*', function (request, response){
-  response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
-})
 
 function leaveRoom(socket, customRoom) {
   if (!customRoom) {
@@ -332,4 +482,27 @@ io.on('connection', socket => {
   });
 });
 
-server.listen(process.env.PORT || 8080);
+
+var runServer = function(callback) {
+    mongoose.connect(config.DATABASE_URL, function(err) {
+        if (err && callback) {
+            return callback(err);
+        }
+
+        server.listen(config.PORT, function() {
+            console.log('Listening on localhost:' + config.PORT);
+            if (callback) {
+                callback();
+            }
+        });
+    });
+};
+
+if (require.main === module) {
+    runServer(function(err) {
+        if (err) {
+            console.error(err);
+        }
+    });
+};
+exports.runServer = runServer;
