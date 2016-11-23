@@ -4,9 +4,10 @@ import { connect } from 'react-redux'
 import { Navbar, Nav, NavItem, Popover, Form, FormGroup,FormControl, OverlayTrigger } from 'react-bootstrap'
 import { Button } from 'react-bootstrap'
 import { socket } from '../index'
-import { browserHistory} from 'react-router'
+import { browserHistory } from 'react-router'
 import * as roomActions from '../actions/roomActions'
 import * as videoActions from '../actions/videoActions'
+import LoginForm from './LoginForm'
 
 export class Navigation extends Component {
   constructor(props) {
@@ -78,7 +79,18 @@ export class Navigation extends Component {
           </Nav>
           <Nav pullRight>
             <NavItem eventKey={1}><Button bsStyle="primary" bsSize="xsmall">Sign up</Button></NavItem>
-            <NavItem eventKey={2} href="#">Login</NavItem>
+            <OverlayTrigger
+              rootClose
+              trigger="click"
+              placement="bottom"
+              overlay={
+                <Popover id="popover-trigger-click-root-close" title="Enter username and password below">
+                  <LoginForm />
+                </Popover>
+              }
+            >
+              <NavItem eventKey={2} href="#">Login</NavItem>
+            </OverlayTrigger>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

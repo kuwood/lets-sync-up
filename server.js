@@ -178,14 +178,14 @@ app.post('/users', jsonParser, function(req, res) {
 });
 
 app.get('/profile', isLoggedIn, function(req, res) {
-    User.find({_id: req.user.id}, function(err, user) {
-      if (err) {
-        return res.status(500).json({
-          message: 'Internal Server Error'
-        });
-      }
-      return res.json(user);
-    })
+  User.find({_id: req.user.id}, function(err, user) {
+    if (err) {
+      return res.status(500).json({
+        message: 'Internal Server Error'
+      });
+    }
+    return res.json(user);
+  })
 });
 
 app.post('/login', passport.authenticate('local'), function(req, res) {
