@@ -7,6 +7,7 @@ import store from './store'
 import App from './components/App'
 import Jumbo from './components/Jumbo'
 import RoomContainer from './containers/RoomContainer'
+import ProfileContainer from './containers/ProfileContainer'
 import './css/main.css'
 export let socket = io()
 
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <Router history={browserHistory}>
         <Route path="/" component={App}>
           <IndexRoute component={Jumbo} />
+          <Route path="profile" component={ProfileContainer} />
           <Route path="room" component={RoomContainer}>
             <Route path=":roomName"></Route>
           </Route>

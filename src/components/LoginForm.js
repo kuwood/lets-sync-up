@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { Form, FormGroup, Col, FormControl, Button, ControlLabel } from 'react-bootstrap'
-import * as accountActions from '../actions/accountActions'
+import * as authActions from '../actions/authActions'
 
 export class LoginForm extends Component {
   constructor() {
@@ -18,7 +18,7 @@ export class LoginForm extends Component {
       username: usr.value,
       password: pw.value
     }
-    this.props.dispatch(accountActions.requestLogin(data))
+    this.props.dispatch(authActions.requestLogin(data))
     usr.value = ""
     pw.value = ""
   }

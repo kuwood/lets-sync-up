@@ -48,6 +48,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var jsonParser = bodyParser.json();
 var bcrypt = require('bcryptjs');
 var passport = require('passport')
@@ -55,10 +56,14 @@ var LocalStrategy = require('passport-local').Strategy;
 var config = require('./config');
 
 app.use(express.static('build'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(session({ secret: 'meda' }));
+app.use(bodyParser.json());
+app.use(session({
+  secret: 'meda',
+  resave: true,
+  saveUninitialized: true,
+  store: new MongoStore({ mongooseConnection: mongoose.connection })
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -98,13 +103,13 @@ function validatePassword(password, userpassword, callback) {
     });
 }
 passport.serializeUser(function(user, done) {
-    done(null, user.id);
+  done(null, user);
 });
 
 passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-        done(err, user);
-    });
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
 });
 
 app.post('/users', jsonParser, function(req, res) {
@@ -177,26 +182,33 @@ app.post('/users', jsonParser, function(req, res) {
     });
 });
 
-app.get('/profile', isLoggedIn, function(req, res) {
-  User.find({_id: req.user.id}, function(err, user) {
-    if (err) {
-      return res.status(500).json({
-        message: 'Internal Server Error'
-      });
-    }
-    return res.json(user);
-  })
+app.get('/getprofile', function(req, res) {
+  if (req.isAuthenticated()) {
+    // returns true if a user already logged in.
+    console.log('user is authed');
+    User.findOne({_id: req.session.passport.user}, function(err, user) {
+      if (err) {
+        return res.status(500).json({
+          message: 'Internal Server Error'
+        });
+      }
+      return res.json(user);
+    })
+  }
 });
 
 app.post('/login', passport.authenticate('local'), function(req, res) {
-  return res.status(200).json({});
+  return res.status(200).json({
+    alias: req.user.alias,
+    isAuthenticated: true
+  });
 });
 app.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');
 });
 
-app.get('*', function (request, response){
+app.get('*', isLoggedIn, function (request, response){
   response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
 })
 

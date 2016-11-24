@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { Navbar, Nav, NavItem, Popover, Form, FormGroup,FormControl, OverlayTrigger } from 'react-bootstrap'
+import { Navbar, Nav, NavItem, Popover, Form, FormGroup,FormControl,
+  OverlayTrigger, NavDropdown, MenuItem } from 'react-bootstrap'
 import { Button } from 'react-bootstrap'
 import { socket } from '../index'
 import { browserHistory } from 'react-router'
 import * as roomActions from '../actions/roomActions'
 import * as videoActions from '../actions/videoActions'
+import * as authActions from '../actions/authActions'
 import LoginForm from './LoginForm'
 
 export class Navigation extends Component {
@@ -14,6 +16,9 @@ export class Navigation extends Component {
     super(props)
     this.createRoom = this.createRoom.bind(this)
     this.joinRoom = this.joinRoom.bind(this)
+    this.profile = this.profile.bind(this)
+    this.logout = this.logout.bind(this)
+    this.home = this.home.bind(this)
     socket.on('roomRedirect', roomId => {
       browserHistory.push(`/room/${roomId}`);
       socket.emit('joinRoom', roomId)
@@ -22,6 +27,10 @@ export class Navigation extends Component {
     socket.on('sendHome', () => {
       browserHistory.push(`/`)
     })
+  }
+
+  componentDidMount() {
+    this.props.dispatch(authActions.requestProfile())
   }
 
   createRoom() {
@@ -37,6 +46,18 @@ export class Navigation extends Component {
     browserHistory.push(`/room/${room}`);
     socket.emit('joinRoom', room)
     this.props.dispatch(roomActions.roomId(room))
+  }
+
+  profile() {
+    browserHistory.push(`/profile`);
+  }
+
+  logout() {
+    this.props.dispatch(authActions.authUser(false))
+  }
+
+  home() {
+    browserHistory.push(`/`);
   }
 
   render() {
@@ -61,7 +82,7 @@ export class Navigation extends Component {
       <Navbar>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="/">Lets sync up</a>
+            <a onClick={this.home}>Lets sync up</a>
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>
@@ -78,7 +99,10 @@ export class Navigation extends Component {
               </OverlayTrigger>
           </Nav>
           <Nav pullRight>
+            {!this.props.auth.isAuthenticated ? (
             <NavItem eventKey={1}><Button bsStyle="primary" bsSize="xsmall">Sign up</Button></NavItem>
+            ) : null}
+            {!this.props.auth.isAuthenticated ? (
             <OverlayTrigger
               rootClose
               trigger="click"
@@ -91,6 +115,13 @@ export class Navigation extends Component {
             >
               <NavItem eventKey={2} href="#">Login</NavItem>
             </OverlayTrigger>
+          ) : (
+            <NavDropdown eventKey={3} title="Account" id="account-dropdown">
+              <MenuItem eventKey={3.3} onClick={this.profile}>Profile</MenuItem>
+              <MenuItem divider />
+              <MenuItem eventKey={3.3} onClick={this.logout} href="/logout">Logout</MenuItem>
+            </NavDropdown>
+          )}
           </Nav>
         </Navbar.Collapse>
       </Navbar>
@@ -100,7 +131,8 @@ export class Navigation extends Component {
 
 let mapStateToProps = (state, props) => {
   return {
-    room: state.room
+    room: state.room,
+    auth: state.auth
   }
 }
 
