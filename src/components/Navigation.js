@@ -57,6 +57,8 @@ export class Navigation extends Component {
   }
 
   home() {
+    if (this.props.room.id) socket.emit('leaveRoom', this.props.room.id)
+    this.props.dispatch(videoActions.setVideo(null))
     browserHistory.push(`/`);
   }
 
