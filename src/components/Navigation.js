@@ -30,7 +30,7 @@ export class Navigation extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(authActions.requestProfile())
+    this.props.dispatch(authActions.checkAuth())
   }
 
   createRoom() {

@@ -182,6 +182,23 @@ app.post('/users', jsonParser, function(req, res) {
     });
 });
 
+app.get('/auth', function(req, res) {
+  if (req.isAuthenticated()) {
+    // returns true if a user already logged in.
+    console.log('user is authed');
+    User.findOne({_id: req.session.passport.user}, function(err, user) {
+      if (err) {
+        return res.status(500).json({
+          message: 'Internal Server Error'
+        });
+      }
+      return res.json(user);
+    })
+  } else {
+    return res.status(204).json()
+  }
+})
+
 app.get('/getprofile', function(req, res) {
   if (req.isAuthenticated()) {
     // returns true if a user already logged in.
@@ -193,6 +210,10 @@ app.get('/getprofile', function(req, res) {
         });
       }
       return res.json(user);
+    })
+  } else {
+    return res.status(401).json({
+      message: 'Access denied. Are you logged in?'
     })
   }
 });
