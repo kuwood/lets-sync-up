@@ -11,12 +11,14 @@ import * as videoActions from '../actions/videoActions'
 import * as authActions from '../actions/authActions'
 import * as userActions from '../actions/userActions'
 import LoginForm from './LoginForm'
+import SignUpForm from './SignUpForm'
 
 export class Navigation extends Component {
   constructor(props) {
     super(props)
     this.createRoom = this.createRoom.bind(this)
     this.joinRoom = this.joinRoom.bind(this)
+    this.showModal = this.showModal.bind(this)
     this.profile = this.profile.bind(this)
     this.logout = this.logout.bind(this)
     this.home = this.home.bind(this)
@@ -89,6 +91,10 @@ export class Navigation extends Component {
     }
   }
 
+  showModal() {
+    this.props.dispatch(authActions.signUpModal(true))
+  }
+
   profile() {
     browserHistory.push(`/profile`);
   }
@@ -143,8 +149,9 @@ export class Navigation extends Component {
             </OverlayTrigger>
           </Nav>
           <Nav pullRight>
+            <SignUpForm modal={this.props.auth.signUpModal} />
             {!this.props.auth.isAuthenticated ? (
-            <NavItem eventKey={1}><Button bsStyle="primary" bsSize="xsmall">Sign up</Button></NavItem>
+              <NavItem eventKey={1}><Button onClick={this.showModal} bsStyle="primary" bsSize="xsmall">Sign up</Button></NavItem>
             ) : null}
             {!this.props.auth.isAuthenticated ? (
             <OverlayTrigger

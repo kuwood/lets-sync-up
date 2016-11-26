@@ -135,6 +135,25 @@ app.post('/users', jsonParser, function(req, res) {
             message: 'Incorrect field length: username'
         });
     }
+    //
+    if (!('alias' in req.body)) {
+        return res.status(422).json({
+            message: 'Missing field: alias'
+        });
+    }
+    var alias = req.body.alias;
+    if (typeof alias !== 'string') {
+        return res.status(422).json({
+            message: 'Incorrect field type: alias'
+        });
+    }
+    alias = alias.trim();
+    if (username === '') {
+        return res.status(422).json({
+            message: 'Incorrect field length: alias'
+        });
+    }
+    //
     if (!('password' in req.body)) {
         return res.status(422).json({
             message: 'Missing field: password'
@@ -167,6 +186,7 @@ app.post('/users', jsonParser, function(req, res) {
                 });
             }
             var user = new User({
+                alias: alias,
                 username: username,
                 password: hash
             });
@@ -221,6 +241,7 @@ app.get('/getprofile', isLoggedIn, function(req, res) {
 app.post('/login', passport.authenticate('local'), function(req, res) {
   return res.status(200).json({
     alias: req.user.alias,
+    username: req.user.username,
     isAuthenticated: true
   });
 });

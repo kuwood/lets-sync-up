@@ -2,7 +2,8 @@ import * as authActions from '../actions/authActions'
 
 const initialState = {
   isAuthenticated: false,
-  username: null
+  username: null,
+  signUpModal: false
 }
 
 function authReducer(state = initialState, action) {
@@ -15,6 +16,10 @@ function authReducer(state = initialState, action) {
       return Object.assign({}, state, {
         username: action.username
       })
+    case authActions.SIGN_UP_MODAL:
+    return Object.assign({}, state, {
+      signUpModal: action.signUpModal
+    })
     default:
       return state
   }

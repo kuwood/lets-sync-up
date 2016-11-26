@@ -3,6 +3,7 @@ import * as userActions from './userActions'
 
 export const AUTH_USER = 'AUTH_USER'
 export const USERNAME = 'USERNAME'
+export const SIGN_UP_MODAL = 'SIGN_UP_MODAL'
 
 export const authUser = (bool) => {
   return {
@@ -15,6 +16,13 @@ export const username = (str) => {
   return {
     type: USERNAME,
     username: str
+  }
+}
+
+export const signUpModal = (bool) => {
+  return {
+    type: SIGN_UP_MODAL,
+    signUpModal: bool
   }
 }
 
@@ -88,6 +96,33 @@ export const requestProfile = () => {
       })
       .catch(function(error) {
         console.log(`Oh no! we have an error. ${error}`);
+      })
+  }
+}
+
+export const requestSignUp = (data) => {
+  return function(dispatch) {
+    let url = '/users'
+    axios({
+        method: 'post',
+        url: url,
+        data: JSON.stringify({
+          username: data.username,
+          password: data.password,
+          alias: data.alias
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(function(response) {
+        // dispatch(authUser(true))
+        // dispatch(username(response.data.username))
+        // dispatch(userActions.alias(response.data.alias))
+        return response;
+      })
+      .catch(function (error) {
+        alert(`${error}`)
       })
   }
 }
