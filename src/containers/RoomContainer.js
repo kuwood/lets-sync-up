@@ -13,17 +13,15 @@ import * as videoActions from '../actions/videoActions'
 export class RoomContainer extends Component {
   constructor(props) {
     super(props)
-    socket.emit('joinRoom', this.props.params.roomName)
-    socket.on('setVideo', id => {
-      this.props.dispatch(videoActions.setVideo(id))
-    })
-    socket.on('users', usersList => {
-      this.props.dispatch(roomActions.users(usersList))
-    })
   }
 
   componentDidMount() {
-    this.props.dispatch(roomActions.roomId(this.props.params.roomName))
+    // if room id is not set on mount, set it to the url/params
+    if (!this.props.room.id) {
+      this.props.dispatch(roomActions.roomId(this.props.params.roomName))
+      socket.emit('joinRoom', this.props.params.roomName)
+      console.log(this.props.roomId, 'no room id found assigned it to params');
+    }
   }
 
   render () {
@@ -50,7 +48,14 @@ export class RoomContainer extends Component {
             <Chat room={this.props.room} chat={this.props.chat}/>
           </Col>
           <Col xs={12} md={2}>
-            <RoomControl alias={this.props.user.alias} roomId={this.props.room.id} users={this.props.room.users} isOwner={this.props.user.isOwner}/>
+            <RoomControl
+              auth={this.props.auth}
+              alias={this.props.user.alias}
+              roomId={this.props.room.id}
+              users={this.props.room.users}
+              isOwner={this.props.user.isOwner}
+              modal={this.props.user.aliasModal}
+            />
           </Col>
         </Row>
       </Grid>
@@ -63,7 +68,8 @@ let mapStateToProps = (state, props) => {
     video: state.video,
     user: state.user,
     room: state.room,
-    chat: state.chat
+    chat: state.chat,
+    auth: state.auth
   }
 }
 

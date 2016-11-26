@@ -199,10 +199,10 @@ app.get('/auth', function(req, res) {
   }
 })
 
-app.get('/getprofile', function(req, res) {
+app.get('/getprofile', isLoggedIn, function(req, res) {
   if (req.isAuthenticated()) {
     // returns true if a user already logged in.
-    console.log('user is authed');
+    console.log('user is authed, from getprofile');
     User.findOne({_id: req.session.passport.user}, function(err, user) {
       if (err) {
         return res.status(500).json({
@@ -229,7 +229,7 @@ app.get('/logout', function(req, res){
     res.redirect('/');
 });
 
-app.get('*', isLoggedIn, function (request, response){
+app.get('*', function (request, response){
   response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
 })
 
@@ -261,9 +261,10 @@ var message = function(user, message) {
 function leaveRoom(socket, customRoom) {
   if (!customRoom) {
     let rooms = socket.rooms
-    console.log(rooms, 'SOCKET IS LEAVING FROM THESE ROOMS');
+    console.log(rooms, 'CHECKING FOR ROOMS THAT START WITH "room"');
     for (let room in rooms) {
       if (room.substring(0,4) === 'room') {
+        console.log(roomStates[room].room.count, 'Current count in room');
         // owner flag for the leaving socket
         let isOwner = false
         if (roomStates[room].users[socket.id].isOwner) {
@@ -274,8 +275,10 @@ function leaveRoom(socket, customRoom) {
         delete roomStates[room].users[socket.id];
         console.log('user disconnected. roomCount:', roomStates[room].room.count);
         if (Object.keys(roomStates[room].users).length < 1) {
+          console.log('deleting room', roomStates[room]);
           delete roomStates[room]
         } else if (Object.keys(roomStates[room].users).length === 1) {
+          console.log('assigning new owner in', roomStates[room]);
           let newOwner = Object.keys(roomStates[room].users)[0]
           roomStates[room].users[newOwner].isOwner = true
           io.sockets.in(room).emit('isOwner', true);
@@ -294,6 +297,8 @@ function leaveRoom(socket, customRoom) {
     }
   } else {
     let room = customRoom
+    console.log(roomStates, 'inside leaveRoom roomStates customRoom');
+    console.log(room, 'inside leave room is the room');
     // owner flag for the leaving socket
     let isOwner = false
     if (roomStates[room].users[socket.id].isOwner) {
@@ -336,7 +341,7 @@ function roomReady(roomState) {
     };
   };
   // if all are ready change state to room ready
-  console.log(userLength, 'length/readyCount', readyCount);
+  console.log(userLength, 'userLength loop count/readyCount', readyCount);
   if ( userLength === 1 || userLength - 1 === readyCount || userLength === readyCount) {
     console.log('assigning room state true');
     roomState.room.ready = true;
@@ -364,7 +369,6 @@ io.on('connection', socket => {
     var room = `room${socket.id}`;
     console.log(room, 'will be joined');
     socket.join(room);
-    console.log(socket.adapter.rooms, 'rooooooooooooooooooom');
     roomStates[room] = new state()
     roomStates[room].room.id = room
     console.log(roomStates[room]);
@@ -381,14 +385,14 @@ io.on('connection', socket => {
     if (!roomStates[roomId]) {
       roomStates[roomId] = new state()
       roomStates[roomId].room.id = roomId
-      console.log(roomStates[roomId]);
+      console.log(roomStates[roomId], 'was created!!!');
       roomStates[roomId].users[socket.id] = {
         id: socket.id
       };
     }
     // check sockets rooms for roomId if not there join room
     if (!Object.keys(socket.rooms).includes(roomId)) socket.join(roomId);
-    // add new user to state on channel join
+    // add new user to state on channel join if its not there
     console.log(roomId, 'is roomId');
     if (!roomStates[roomId].users[socket.id]) {
       roomStates[roomId].users[socket.id] = {
@@ -404,6 +408,7 @@ io.on('connection', socket => {
     }
     // set alias
     if (!roomStates[roomId].users[socket.id].alias) {
+      console.log(`no alias for socket, requesting new alias. current count is ${roomStates[roomId].room.count}`);
       let newAlias = `user${roomStates[roomId].room.count}`
       roomStates[roomId].users[socket.id].alias = newAlias
       socket.emit('requestAlias', newAlias)
@@ -417,7 +422,13 @@ io.on('connection', socket => {
   });
 
   socket.on('setAlias', aliasData => {
+    console.log('alias data was sent', aliasData);
     let roomId = aliasData.roomId
+    console.log(socket.id, 'socketidd');
+    console.log(roomId, 'roomid');
+    console.log(roomStates[roomId], 'room state in set alias');
+    console.log(roomStates[roomId].users, 'rooms users inside set alias');
+
     roomStates[roomId].users[socket.id].alias = aliasData.name
     updateClientUsersList(roomStates[roomId])
   })
@@ -432,7 +443,7 @@ io.on('connection', socket => {
 
   // handle isReady
   socket.on('isReady', data => {
-    console.log(roomStates);
+    console.log(roomStates, 'state from isReady call');
     console.log(socket.id, 'isReady ', data, 'room ready ', roomStates[data.room].room.ready);
     roomStates[data.room].users[socket.id].isReady = data.isReady;
     roomReady(roomStates[data.room]);
@@ -448,7 +459,7 @@ io.on('connection', socket => {
 
   // handle position setting
   socket.on('setPosition', data => {
-    console.log(data, 'videodod');
+    console.log(data, 'video data on setPosition call');
     roomStates[data.room].video.position = data.position;
     io.sockets.in(data.room).emit('broadcastPosition', roomStates[data.room].video.position);
     console.log(roomStates[data.room].video);
@@ -456,6 +467,7 @@ io.on('connection', socket => {
 
   // handle leaving room/room change
   socket.on('leaveRoom', roomId => {
+    console.log('leaveRoom called on id', roomId);
     socket.leave(roomId)
     if (roomId.substring(0,4) === 'room') {
       leaveRoom(socket)
@@ -475,7 +487,7 @@ io.on('connection', socket => {
         }
       }
     }
-    console.log(rooms, '**************************');
+    console.log(rooms, '**************************rooms inside disconnecting');
     if (customRoom) {
       leaveRoom(socket, customRoom)
     } else {
@@ -507,7 +519,7 @@ io.on('connection', socket => {
   })
 
   socket.on('disconnect', data => {
-    console.log('A disconnect happened');
+    console.log('A socket disconnect happened');
     console.log(roomStates);
     console.log('....');
     console.log('....');

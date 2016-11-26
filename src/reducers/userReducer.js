@@ -3,7 +3,8 @@ import * as userActions from '../actions/userActions'
 const initialState = {
   isReady: false,
   isOwner: false,
-  alias: null
+  alias: null,
+  aliasModal: false
 }
 
 function userReducer(state = initialState, action) {
@@ -24,6 +25,10 @@ function userReducer(state = initialState, action) {
       return Object.assign({}, state, {
         alias: action.alias
       })
+      case userActions.ALIAS_MODAL:
+        return Object.assign({}, state, {
+          aliasModal: action.aliasModal
+        })
     default:
       return state
   }

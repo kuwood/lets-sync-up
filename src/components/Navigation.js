@@ -9,6 +9,7 @@ import { browserHistory } from 'react-router'
 import * as roomActions from '../actions/roomActions'
 import * as videoActions from '../actions/videoActions'
 import * as authActions from '../actions/authActions'
+import * as userActions from '../actions/userActions'
 import LoginForm from './LoginForm'
 
 export class Navigation extends Component {
@@ -19,33 +20,73 @@ export class Navigation extends Component {
     this.profile = this.profile.bind(this)
     this.logout = this.logout.bind(this)
     this.home = this.home.bind(this)
-    socket.on('roomRedirect', roomId => {
-      browserHistory.push(`/room/${roomId}`);
-      socket.emit('joinRoom', roomId)
-      this.props.dispatch(roomActions.roomId(roomId));
-    })
-    socket.on('sendHome', () => {
-      browserHistory.push(`/`)
-    })
   }
 
   componentDidMount() {
     this.props.dispatch(authActions.checkAuth())
+    // server emits from createRoom event
+    socket.on('roomRedirect', roomId => {
+      browserHistory.push(`/room/${roomId}`);
+      this.props.dispatch(roomActions.roomId(roomId));
+      console.log(this.props.room.id, 'from redirect');
+      socket.emit('joinRoom', roomId)
+    })
+    // getes called from server kickUser
+    socket.on('sendHome', () => {
+      browserHistory.push(`/`)
+    })
+    socket.on('setVideo', id => {
+      this.props.dispatch(videoActions.setVideo(id))
+    })
+    socket.on('users', usersList => {
+      this.props.dispatch(roomActions.users(usersList))
+    })
+    socket.on('requestAlias', defaultAlias => {
+      console.log('alias requested', this.props.room.id, 'is current id');
+      console.log('auth status is', this.props.auth.isAuthenticated);
+      console.log('alias is', this.props.alias);
+      if (this.props.auth.isAuthenticated) {
+        let aliasData = {roomId: this.props.room.id, name: this.props.alias}
+        socket.emit('setAlias', aliasData)
+      } else {
+        this.props.dispatch(userActions.alias(defaultAlias))
+        this.props.dispatch(userActions.aliasModal(true))
+        // TODO: maybe store modal state in redux store to control request
+        // this.setState({showModal: true})
+        // let aliasData = {roomId: this.props.room.id, name: defaultAlias}
+      }
+    })
   }
 
   createRoom() {
     if (this.props.room.id) socket.emit('leaveRoom', this.props.room.id)
+    this.props.dispatch(roomActions.roomId(null))
     socket.emit('createRoom')
   }
 
   joinRoom(e) {
     e.preventDefault()
     if (this.props.room.id) socket.emit('leaveRoom', this.props.room.id)
-    let room = ReactDOM.findDOMNode(this.roomId).value
+    this.props.dispatch(roomActions.roomId(null))
     this.props.dispatch(videoActions.setVideo(null))
+
+    let room = ReactDOM.findDOMNode(this.roomId).value
+    let data = {
+      roomId: room,
+      name: this.props.alias
+    }
     browserHistory.push(`/room/${room}`);
-    socket.emit('joinRoom', room)
     this.props.dispatch(roomActions.roomId(room))
+    socket.emit('joinRoom', room)
+    if (this.props.auth.isAuthenticated) {
+      console.log('alias is', this.props.alias);
+      let data = {
+        roomId: room,
+        name: this.props.alias
+      }
+      console.log('set alias from Navigation');
+      socket.emit('setAlias', data)
+    }
   }
 
   profile() {
@@ -58,8 +99,9 @@ export class Navigation extends Component {
 
   home() {
     if (this.props.room.id) socket.emit('leaveRoom', this.props.room.id)
-    this.props.dispatch(videoActions.setVideo(null))
     browserHistory.push(`/`);
+    this.props.dispatch(videoActions.setVideo(null))
+    this.props.dispatch(roomActions.roomId(null))
   }
 
   render() {
@@ -91,14 +133,14 @@ export class Navigation extends Component {
         <Navbar.Collapse>
           <Nav>
             <NavItem eventKey={1} onClick={this.createRoom}>Create a room</NavItem>
-              <OverlayTrigger
-                rootClose
-                trigger="click"
-                placement="bottom"
-                overlay={joinPop}
-              >
-                <NavItem eventKey={2}>Join a room</NavItem>
-              </OverlayTrigger>
+            <OverlayTrigger
+              rootClose
+              trigger="click"
+              placement="bottom"
+              overlay={joinPop}
+            >
+              <NavItem eventKey={2}>Join a room</NavItem>
+            </OverlayTrigger>
           </Nav>
           <Nav pullRight>
             {!this.props.auth.isAuthenticated ? (
@@ -118,9 +160,7 @@ export class Navigation extends Component {
               <NavItem eventKey={2} href="#">Login</NavItem>
             </OverlayTrigger>
           ) : (
-            <NavDropdown eventKey={3} title="Account" id="account-dropdown">
-              <MenuItem eventKey={3.3} onClick={this.profile}>Profile</MenuItem>
-              <MenuItem divider />
+            <NavDropdown eventKey={3} title={`${this.props.auth.username}`} id="account-dropdown">
               <MenuItem eventKey={3.3} onClick={this.logout} href="/logout">Logout</MenuItem>
             </NavDropdown>
           )}
@@ -134,7 +174,8 @@ export class Navigation extends Component {
 let mapStateToProps = (state, props) => {
   return {
     room: state.room,
-    auth: state.auth
+    auth: state.auth,
+    alias: state.user.alias
   }
 }
 

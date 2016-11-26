@@ -2,11 +2,19 @@ import axios from 'axios'
 import * as userActions from './userActions'
 
 export const AUTH_USER = 'AUTH_USER'
+export const USERNAME = 'USERNAME'
 
 export const authUser = (bool) => {
   return {
     type: AUTH_USER,
     isAuthenticated: bool
+  }
+}
+
+export const username = (str) => {
+  return {
+    type: USERNAME,
+    username: str
   }
 }
 
@@ -26,7 +34,7 @@ export const requestLogin = (data) => {
       })
       .then(function(response) {
         dispatch(authUser(true))
-        localStorage.setItem('auth', true)
+        dispatch(username(response.data.username))
         dispatch(userActions.alias(response.data.alias))
         return response;
       })
@@ -46,6 +54,7 @@ export const checkAuth = () => {
       .then(function(response) {
         if (response.data._id) {
           dispatch(authUser(true))
+          dispatch(username(response.data.username))
           dispatch(userActions.alias(response.data.alias))
         }
         return response

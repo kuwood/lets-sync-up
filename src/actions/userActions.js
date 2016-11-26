@@ -2,6 +2,7 @@ export const IS_READY = 'IS_READY'
 export const IS_NOT_READY = 'IS_NOT_READY'
 export const IS_OWNER = 'IS_OWNER'
 export const ALIAS = 'ALIAS'
+export const ALIAS_MODAL = 'ALIAS_MODAL'
 
 export const isReady = () => {
   return {
@@ -28,5 +29,12 @@ export const alias = (str) => {
   return {
     type: ALIAS,
     alias: str
+  }
+}
+
+export const aliasModal = (bool) => {
+  return {
+    type: ALIAS_MODAL,
+    aliasModal: bool
   }
 }

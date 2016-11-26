@@ -1,7 +1,8 @@
 import * as authActions from '../actions/authActions'
 
 const initialState = {
-  isAuthenticated: false
+  isAuthenticated: false,
+  username: null
 }
 
 function authReducer(state = initialState, action) {
@@ -9,6 +10,10 @@ function authReducer(state = initialState, action) {
     case authActions.AUTH_USER:
       return Object.assign({}, state, {
         isAuthenticated: action.isAuthenticated
+      })
+    case authActions.USERNAME:
+      return Object.assign({}, state, {
+        username: action.username
       })
     default:
       return state
