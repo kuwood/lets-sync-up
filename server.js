@@ -39,14 +39,222 @@ if (!Array.prototype.includes) {
 var http = require('http');
 var path = require('path')
 var express = require('express');
-var socket_io = require('socket.io');
-
 var app = express();
-app.use(express.static('build'));
-
 var server = http.Server(app);
+var socket_io = require('socket.io');
 var io = socket_io(server);
+var mongoose = require('mongoose');
 
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var jsonParser = bodyParser.json();
+var bcrypt = require('bcryptjs');
+var passport = require('passport')
+var LocalStrategy = require('passport-local').Strategy;
+var config = require('./config');
+
+app.use(express.static('build'));
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(session({
+  secret: 'meda',
+  resave: true,
+  saveUninitialized: true,
+  store: new MongoStore({ mongooseConnection: mongoose.connection })
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+    res.redirect('/');
+}
+
+var User = require('./models/userModel');
+
+passport.use('local', new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      validatePassword(password, user.password, function(error){
+          if(error) {
+              return done(null, false, { message: 'Incorrect password.' });
+          } else {
+              return done(null, user);
+          }
+      });
+    });
+  }
+));
+
+function validatePassword(password, userpassword, callback) {
+    bcrypt.compare(password, userpassword, function(err, isValid) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        callback(null, isValid);
+    });
+}
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+app.post('/users', jsonParser, function(req, res) {
+    if (!req.body) {
+        return res.status(400).json({
+            message: 'No request body'
+        });
+    }
+    if (!('username' in req.body)) {
+        return res.status(422).json({
+            message: 'Missing field: username'
+        });
+    }
+    var username = req.body.username;
+    if (typeof username !== 'string') {
+        return res.status(422).json({
+            message: 'Incorrect field type: username'
+        });
+    }
+    username = username.trim();
+    if (username === '') {
+        return res.status(422).json({
+            message: 'Incorrect field length: username'
+        });
+    }
+    //
+    if (!('alias' in req.body)) {
+        return res.status(422).json({
+            message: 'Missing field: alias'
+        });
+    }
+    var alias = req.body.alias;
+    if (typeof alias !== 'string') {
+        return res.status(422).json({
+            message: 'Incorrect field type: alias'
+        });
+    }
+    alias = alias.trim();
+    if (username === '') {
+        return res.status(422).json({
+            message: 'Incorrect field length: alias'
+        });
+    }
+    //
+    if (!('password' in req.body)) {
+        return res.status(422).json({
+            message: 'Missing field: password'
+        });
+    }
+    var password = req.body.password;
+    if (typeof password !== 'string') {
+        return res.status(422).json({
+            message: 'Incorrect field type: password'
+        });
+    }
+
+    password = password.trim();
+
+    if (password === '') {
+        return res.status(422).json({
+            message: 'Incorrect field length: password'
+        });
+    }
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) {
+            return res.status(500).json({
+                message: 'Internal server error'
+            });
+        }
+        bcrypt.hash(password, salt, function(err, hash) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Internal server error'
+                });
+            }
+            var user = new User({
+                alias: alias,
+                username: username,
+                password: hash
+            });
+            user.save(function(err) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Internal server error'
+                    });
+                }
+                return res.status(201).json({});
+            });
+        });
+    });
+});
+
+app.get('/auth', function(req, res) {
+  if (req.isAuthenticated()) {
+    // returns true if a user already logged in.
+    console.log('user is authed');
+    User.findOne({_id: req.session.passport.user}, function(err, user) {
+      if (err) {
+        return res.status(500).json({
+          message: 'Internal Server Error'
+        });
+      }
+      return res.json(user);
+    })
+  } else {
+    return res.status(204).json()
+  }
+})
+
+app.get('/getprofile', isLoggedIn, function(req, res) {
+  if (req.isAuthenticated()) {
+    // returns true if a user already logged in.
+    console.log('user is authed, from getprofile');
+    User.findOne({_id: req.session.passport.user}, function(err, user) {
+      if (err) {
+        return res.status(500).json({
+          message: 'Internal Server Error'
+        });
+      }
+      return res.json(user);
+    })
+  } else {
+    return res.status(401).json({
+      message: 'Access denied. Are you logged in?'
+    })
+  }
+});
+
+app.post('/login', passport.authenticate('local'), function(req, res) {
+  return res.status(200).json({
+    alias: req.user.alias,
+    username: req.user.username,
+    isAuthenticated: true
+  });
+});
+app.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+});
+
+app.get('*', function (request, response){
+  response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+})
+
+// server state
 var roomStates = {}
 var state = function() {
   this.room = {
@@ -71,16 +279,13 @@ var message = function(user, message) {
   this.message = message;
 }
 
-app.get('*', function (request, response){
-  response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
-})
-
 function leaveRoom(socket, customRoom) {
   if (!customRoom) {
     let rooms = socket.rooms
-    console.log(rooms, 'SOCKET IS LEAVING FROM THESE ROOMS');
+    console.log(rooms, 'CHECKING FOR ROOMS THAT START WITH "room"');
     for (let room in rooms) {
       if (room.substring(0,4) === 'room') {
+        console.log(roomStates[room].room.count, 'Current count in room');
         // owner flag for the leaving socket
         let isOwner = false
         if (roomStates[room].users[socket.id].isOwner) {
@@ -91,8 +296,10 @@ function leaveRoom(socket, customRoom) {
         delete roomStates[room].users[socket.id];
         console.log('user disconnected. roomCount:', roomStates[room].room.count);
         if (Object.keys(roomStates[room].users).length < 1) {
+          console.log('deleting room', roomStates[room]);
           delete roomStates[room]
         } else if (Object.keys(roomStates[room].users).length === 1) {
+          console.log('assigning new owner in', roomStates[room]);
           let newOwner = Object.keys(roomStates[room].users)[0]
           roomStates[room].users[newOwner].isOwner = true
           io.sockets.in(room).emit('isOwner', true);
@@ -111,6 +318,8 @@ function leaveRoom(socket, customRoom) {
     }
   } else {
     let room = customRoom
+    console.log(roomStates, 'inside leaveRoom roomStates customRoom');
+    console.log(room, 'inside leave room is the room');
     // owner flag for the leaving socket
     let isOwner = false
     if (roomStates[room].users[socket.id].isOwner) {
@@ -153,7 +362,7 @@ function roomReady(roomState) {
     };
   };
   // if all are ready change state to room ready
-  console.log(userLength, 'length/readyCount', readyCount);
+  console.log(userLength, 'userLength loop count/readyCount', readyCount);
   if ( userLength === 1 || userLength - 1 === readyCount || userLength === readyCount) {
     console.log('assigning room state true');
     roomState.room.ready = true;
@@ -180,8 +389,7 @@ io.on('connection', socket => {
     console.log('createRoom request');
     var room = `room${socket.id}`;
     console.log(room, 'will be joined');
-    socket.join(room);
-    console.log(socket.adapter.rooms, 'rooooooooooooooooooom');
+    // socket.join(room);
     roomStates[room] = new state()
     roomStates[room].room.id = room
     console.log(roomStates[room]);
@@ -198,14 +406,17 @@ io.on('connection', socket => {
     if (!roomStates[roomId]) {
       roomStates[roomId] = new state()
       roomStates[roomId].room.id = roomId
-      console.log(roomStates[roomId]);
+      console.log(roomStates[roomId], 'was created!!!');
       roomStates[roomId].users[socket.id] = {
         id: socket.id
       };
     }
     // check sockets rooms for roomId if not there join room
-    if (!Object.keys(socket.rooms).includes(roomId)) socket.join(roomId);
-    // add new user to state on channel join
+    if (!Object.keys(socket.rooms).includes(roomId)) {
+      console.log('did not find roomId in sockets rooms, joining room', roomId);
+      socket.join(roomId)
+    };
+    // add new user to state on channel join if its not there
     console.log(roomId, 'is roomId');
     if (!roomStates[roomId].users[socket.id]) {
       roomStates[roomId].users[socket.id] = {
@@ -221,6 +432,7 @@ io.on('connection', socket => {
     }
     // set alias
     if (!roomStates[roomId].users[socket.id].alias) {
+      console.log(`no alias for socket, requesting new alias. current count is ${roomStates[roomId].room.count}`);
       let newAlias = `user${roomStates[roomId].room.count}`
       roomStates[roomId].users[socket.id].alias = newAlias
       socket.emit('requestAlias', newAlias)
@@ -234,7 +446,13 @@ io.on('connection', socket => {
   });
 
   socket.on('setAlias', aliasData => {
+    console.log('alias data was sent', aliasData);
     let roomId = aliasData.roomId
+    console.log(socket.id, 'socketidd');
+    console.log(roomId, 'roomid');
+    console.log(roomStates[roomId], 'room state in set alias');
+    console.log(roomStates[roomId].users, 'rooms users inside set alias');
+
     roomStates[roomId].users[socket.id].alias = aliasData.name
     updateClientUsersList(roomStates[roomId])
   })
@@ -249,7 +467,7 @@ io.on('connection', socket => {
 
   // handle isReady
   socket.on('isReady', data => {
-    console.log(roomStates);
+    console.log(roomStates, 'state from isReady call');
     console.log(socket.id, 'isReady ', data, 'room ready ', roomStates[data.room].room.ready);
     roomStates[data.room].users[socket.id].isReady = data.isReady;
     roomReady(roomStates[data.room]);
@@ -265,7 +483,7 @@ io.on('connection', socket => {
 
   // handle position setting
   socket.on('setPosition', data => {
-    console.log(data, 'videodod');
+    console.log(data, 'video data on setPosition call');
     roomStates[data.room].video.position = data.position;
     io.sockets.in(data.room).emit('broadcastPosition', roomStates[data.room].video.position);
     console.log(roomStates[data.room].video);
@@ -273,6 +491,7 @@ io.on('connection', socket => {
 
   // handle leaving room/room change
   socket.on('leaveRoom', roomId => {
+    console.log('leaveRoom called on id', roomId);
     socket.leave(roomId)
     if (roomId.substring(0,4) === 'room') {
       leaveRoom(socket)
@@ -292,7 +511,7 @@ io.on('connection', socket => {
         }
       }
     }
-    console.log(rooms, '**************************');
+    console.log(rooms, '**************************rooms inside disconnecting');
     if (customRoom) {
       leaveRoom(socket, customRoom)
     } else {
@@ -320,11 +539,12 @@ io.on('connection', socket => {
     console.log(chatMessage);
     roomStates[room].chat.messages.push(chatMessage)
     console.log(roomChat, 'is room chat');
+    console.log('emitting to these sockets', io.sockets.in(room));
     io.sockets.in(room).emit('chatMessage', roomChat[roomChat.length - 1])
   })
 
   socket.on('disconnect', data => {
-    console.log('A disconnect happened');
+    console.log('A socket disconnect happened');
     console.log(roomStates);
     console.log('....');
     console.log('....');
@@ -332,4 +552,27 @@ io.on('connection', socket => {
   });
 });
 
-server.listen(process.env.PORT || 8080);
+
+var runServer = function(callback) {
+    mongoose.connect(config.DATABASE_URL, function(err) {
+        if (err && callback) {
+            return callback(err);
+        }
+
+        server.listen(config.PORT, function() {
+            console.log('Listening on localhost:' + config.PORT);
+            if (callback) {
+                callback();
+            }
+        });
+    });
+};
+
+if (require.main === module) {
+    runServer(function(err) {
+        if (err) {
+            console.error(err);
+        }
+    });
+};
+exports.runServer = runServer;

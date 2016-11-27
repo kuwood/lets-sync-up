@@ -10,11 +10,6 @@ class RoomControl extends Component {
     super(props)
     this.handleAlias = this.handleAlias.bind(this)
     this.toggleAlias = this.toggleAlias.bind(this)
-    this.state = {showModal: false}
-    socket.on('requestAlias', defaultAlias => {
-      this.props.dispatch(userActions.alias(defaultAlias))
-      this.setState({showModal: true})
-    })
   }
 
   handleKick(user) {
@@ -22,22 +17,26 @@ class RoomControl extends Component {
     socket.emit('kickUser', user)
   }
 
+  // toggles alias change modal
   toggleAlias() {
-    this.setState({showModal: !this.state.showModal})
+    console.log('calling alias', this.props.modal);
+    this.props.dispatch(userActions.aliasModal(!this.props.modal))
   }
 
+  // handles setting new alias from modal
   handleAlias(e) {
     e.preventDefault()
     let newAlias = ReactDOM.findDOMNode(this.inputAlias).value
     let aliasData = {roomId: this.props.roomId, name: newAlias}
     this.props.dispatch(userActions.alias(newAlias))
+    console.log('set alias from handle alias');
     socket.emit('setAlias', aliasData)
-    this.setState({showModal: this.state.false})
+    this.props.dispatch(userActions.aliasModal(false))
   }
 
   render () {
     let aliasModal = <Form>
-    <Modal show={this.state.showModal} onHide={this.toggleAlias}>
+    <Modal show={this.props.modal} onHide={this.toggleAlias}>
       <Modal.Header>
         <Modal.Title>Set New Alias</Modal.Title>
       </Modal.Header>

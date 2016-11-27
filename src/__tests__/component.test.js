@@ -62,7 +62,6 @@ describe('Chat', () => {
   })
   it('recieves chat messages and dispatches new message', () => {
     const wrapper = shallow(<Chat room={state.room} chat={state.chat}/>)
-    console.log(wrapper);
   })
   it('renders ChatForm component without crashing', () => {
     const wrapper = mount(<ChatForm room={{id: '123'}}/>)
