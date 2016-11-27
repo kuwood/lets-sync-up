@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
       <Router history={browserHistory}>
         <Route path="/" component={App}>
           <IndexRoute component={Jumbo} />
-          <Route path="profile" component={ProfileContainer} />
           <Route path="room" component={RoomContainer}>
             <Route path=":roomName"></Route>
           </Route>

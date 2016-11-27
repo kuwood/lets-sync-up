@@ -389,7 +389,7 @@ io.on('connection', socket => {
     console.log('createRoom request');
     var room = `room${socket.id}`;
     console.log(room, 'will be joined');
-    socket.join(room);
+    // socket.join(room);
     roomStates[room] = new state()
     roomStates[room].room.id = room
     console.log(roomStates[room]);
@@ -412,7 +412,10 @@ io.on('connection', socket => {
       };
     }
     // check sockets rooms for roomId if not there join room
-    if (!Object.keys(socket.rooms).includes(roomId)) socket.join(roomId);
+    if (!Object.keys(socket.rooms).includes(roomId)) {
+      console.log('did not find roomId in sockets rooms, joining room', roomId);
+      socket.join(roomId)
+    };
     // add new user to state on channel join if its not there
     console.log(roomId, 'is roomId');
     if (!roomStates[roomId].users[socket.id]) {
@@ -536,6 +539,7 @@ io.on('connection', socket => {
     console.log(chatMessage);
     roomStates[room].chat.messages.push(chatMessage)
     console.log(roomChat, 'is room chat');
+    console.log('emitting to these sockets', io.sockets.in(room));
     io.sockets.in(room).emit('chatMessage', roomChat[roomChat.length - 1])
   })
 

@@ -10,6 +10,7 @@ import * as roomActions from '../actions/roomActions'
 import * as videoActions from '../actions/videoActions'
 import * as authActions from '../actions/authActions'
 import * as userActions from '../actions/userActions'
+import * as chatActions from '../actions/chatActions'
 import LoginForm from './LoginForm'
 import SignUpForm from './SignUpForm'
 
@@ -29,9 +30,11 @@ export class Navigation extends Component {
     // server emits from createRoom event
     socket.on('roomRedirect', roomId => {
       browserHistory.push(`/room/${roomId}`);
-      this.props.dispatch(roomActions.roomId(roomId));
+      if (!this.props.room.id) {
+        this.props.dispatch(roomActions.roomId(roomId));
+        socket.emit('joinRoom', roomId)
+      }
       console.log(this.props.room.id, 'from redirect');
-      socket.emit('joinRoom', roomId)
     })
     // getes called from server kickUser
     socket.on('sendHome', () => {
@@ -53,9 +56,14 @@ export class Navigation extends Component {
       } else {
         this.props.dispatch(userActions.alias(defaultAlias))
         this.props.dispatch(userActions.aliasModal(true))
-        // TODO: maybe store modal state in redux store to control request
-        // this.setState({showModal: true})
-        // let aliasData = {roomId: this.props.room.id, name: defaultAlias}
+      }
+    })
+    socket.on('chatMessage', data => {
+      console.log(socket.id, 'recieved a chat message,', data);
+      this.props.dispatch(chatActions.newMessage(data))
+      if (this.props.room.id) {
+        let element = document.getElementById('chat-container')
+        element.scrollTop = element.scrollHeight
       }
     })
   }
@@ -63,6 +71,7 @@ export class Navigation extends Component {
   createRoom() {
     if (this.props.room.id) socket.emit('leaveRoom', this.props.room.id)
     this.props.dispatch(roomActions.roomId(null))
+    this.props.dispatch(chatActions.clearMessages())
     socket.emit('createRoom')
   }
 
@@ -71,6 +80,7 @@ export class Navigation extends Component {
     if (this.props.room.id) socket.emit('leaveRoom', this.props.room.id)
     this.props.dispatch(roomActions.roomId(null))
     this.props.dispatch(videoActions.setVideo(null))
+    this.props.dispatch(chatActions.clearMessages())
 
     let room = ReactDOM.findDOMNode(this.roomId).value
     let data = {
@@ -79,6 +89,7 @@ export class Navigation extends Component {
     }
     browserHistory.push(`/room/${room}`);
     this.props.dispatch(roomActions.roomId(room))
+    console.log('joinRoom method was called, joining room');
     socket.emit('joinRoom', room)
     if (this.props.auth.isAuthenticated) {
       console.log('alias is', this.props.alias);
@@ -108,6 +119,7 @@ export class Navigation extends Component {
     browserHistory.push(`/`);
     this.props.dispatch(videoActions.setVideo(null))
     this.props.dispatch(roomActions.roomId(null))
+    this.props.dispatch(chatActions.clearMessages())
   }
 
   render() {
@@ -121,7 +133,7 @@ export class Navigation extends Component {
               placeholder="room..."
             />
             {' '}
-            <Button type="submit" bsSize="small" onClick={this.joinRoom}>
+            <Button type="submit" bsSize="small">
               Go!
             </Button>
           </FormGroup>
