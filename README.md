@@ -11,7 +11,7 @@ and to the right of the video player users can change their alias, see the room 
 
 ## In action:
 ### Home Page
-<img src='https://raw.githubusercontent.com/kuwood/lets-sync-up/master/img/homepage.png' width='300'>
+<img src='https://raw.githubusercontent.com/kuwood/lets-sync-up/master/img/homepage.png' width='800'>
 
 From this page you can:
 * Create a room
@@ -25,7 +25,7 @@ From this modal you can:
 * Create an account by entering an alias, email, and desired password.
 
 ### Logging In
-<img src='https://raw.githubusercontent.com/kuwood/lets-sync-up/master/img/login.png' width='800'>
+<img src='https://raw.githubusercontent.com/kuwood/lets-sync-up/master/img/login.png' width='300'>
 From this pop over you can:
 * log in with your credentials
 
