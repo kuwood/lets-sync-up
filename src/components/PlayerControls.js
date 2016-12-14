@@ -118,7 +118,7 @@ export class PlayerControls extends Component {
         <div className="inline-block">
           {vidSource}
         </div>
-        <div className="inline-block">
+        <div id="controls-right" className="inline-block">
           <Form inline>
             {positionInput}
             {spacer}

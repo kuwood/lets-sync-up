@@ -19,7 +19,6 @@ class RoomControl extends Component {
 
   // toggles alias change modal
   toggleAlias() {
-    console.log('calling alias', this.props.modal);
     this.props.dispatch(userActions.aliasModal(!this.props.modal))
   }
 
@@ -29,7 +28,6 @@ class RoomControl extends Component {
     let newAlias = ReactDOM.findDOMNode(this.inputAlias).value
     let aliasData = {roomId: this.props.roomId, name: newAlias}
     this.props.dispatch(userActions.alias(newAlias))
-    console.log('set alias from handle alias');
     socket.emit('setAlias', aliasData)
     this.props.dispatch(userActions.aliasModal(false))
   }
@@ -47,7 +45,7 @@ class RoomControl extends Component {
 
       <Modal.Footer>
         <Button onClick={this.toggleAlias}>Close</Button>
-        <Button type="submit" bsStyle="primary" onClick={this.handleAlias}>Save changes</Button>
+        <Button type="submit" bsStyle="custom" onClick={this.handleAlias}>Save changes</Button>
       </Modal.Footer>
 
     </Modal>

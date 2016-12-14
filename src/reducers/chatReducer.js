@@ -7,7 +7,6 @@ const initialState = {
 function chatReducer(state = initialState, action) {
   switch (action.type) {
     case chatActions.NEW_MESSAGE:
-      console.log(state.messages);
       return Object.assign({}, state, {
         messages: [
           ...state.messages,

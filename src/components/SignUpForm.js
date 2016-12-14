@@ -29,6 +29,7 @@ export class SignUpForm extends Component {
     usr.value = ""
     pw.value = ""
     alias.value = ""
+    this.props.dispatch(authActions.signUpModal(false))
   }
 
   render() {
@@ -68,7 +69,7 @@ export class SignUpForm extends Component {
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.toggleModal}>Close</Button>
-          <Button type="submit" bsStyle="primary" onClick={this.handleSubmit}>Submit</Button>
+          <Button type="submit" bsStyle="custom" onClick={this.handleSubmit}>Submit</Button>
         </Modal.Footer>
       </Modal>
     )
