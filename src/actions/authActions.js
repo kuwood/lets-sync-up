@@ -84,7 +84,6 @@ export const requestProfile = () => {
         if (response.status >= 500) {
           throw new Error(response.status)
         } else if ((response.status >= 400) && (response.status < 500)) {
-          console.log(response.status);
         }
         if (response.data._id) {
           dispatch(authUser(true))

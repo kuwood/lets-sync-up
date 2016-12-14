@@ -34,7 +34,6 @@ export class Navigation extends Component {
         this.props.dispatch(roomActions.roomId(roomId));
         socket.emit('joinRoom', roomId)
       }
-      console.log(this.props.room.id, 'from redirect');
     })
     // getes called from server kickUser
     socket.on('sendHome', () => {
@@ -47,9 +46,6 @@ export class Navigation extends Component {
       this.props.dispatch(roomActions.users(usersList))
     })
     socket.on('requestAlias', defaultAlias => {
-      console.log('alias requested', this.props.room.id, 'is current id');
-      console.log('auth status is', this.props.auth.isAuthenticated);
-      console.log('alias is', this.props.alias);
       if (this.props.auth.isAuthenticated) {
         let aliasData = {roomId: this.props.room.id, name: this.props.alias}
         socket.emit('setAlias', aliasData)
@@ -59,7 +55,6 @@ export class Navigation extends Component {
       }
     })
     socket.on('chatMessage', data => {
-      console.log(socket.id, 'recieved a chat message,', data);
       this.props.dispatch(chatActions.newMessage(data))
       if (this.props.room.id) {
         let element = document.getElementById('chat-container')
@@ -89,15 +84,12 @@ export class Navigation extends Component {
     }
     browserHistory.push(`/room/${room}`);
     this.props.dispatch(roomActions.roomId(room))
-    console.log('joinRoom method was called, joining room');
     socket.emit('joinRoom', room)
     if (this.props.auth.isAuthenticated) {
-      console.log('alias is', this.props.alias);
       let data = {
         roomId: room,
         name: this.props.alias
       }
-      console.log('set alias from Navigation');
       socket.emit('setAlias', data)
     }
   }
@@ -141,7 +133,7 @@ export class Navigation extends Component {
       </Popover>
     );
     return (
-      <Navbar>
+      <Navbar inverse>
         <Navbar.Header>
           <Navbar.Brand>
             <a onClick={this.home}>Lets sync up</a>
@@ -163,7 +155,7 @@ export class Navigation extends Component {
           <Nav pullRight>
             <SignUpForm modal={this.props.auth.signUpModal} />
             {!this.props.auth.isAuthenticated ? (
-              <NavItem eventKey={1}><Button onClick={this.showModal} bsStyle="primary" bsSize="xsmall">Sign up</Button></NavItem>
+              <NavItem eventKey={1} className="blue" onClick={this.showModal}>Sign up</NavItem>
             ) : null}
             {!this.props.auth.isAuthenticated ? (
             <OverlayTrigger

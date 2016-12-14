@@ -8,12 +8,24 @@ body {
   padding: 0;
   font-family: sans-serif;
   height: 100%;
+  background-color: #eee;
+}
+
+ul, ol {
+  list-style: none;
+  margin: 0;
 }
 
 a {
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+}
+
+iframe {
+  border-top-left-radius: 4px;
+  border: 1px solid black;
+  border-top-right-radius: 4px;
 }
 
 #root {
@@ -24,6 +36,10 @@ a {
 .inline-block {
   display: inline-block;
   margin-right: 5px
+}
+
+.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover {
+  background-color: #333;
 }
 
 .users-control {
@@ -62,7 +78,6 @@ a {
 }
 
 .App {
-  /*text-align: center;*/
   height: 100%;
 }
 
@@ -97,8 +112,6 @@ a {
 }
 
 .controls-container {
-  /*height: 50px;
-  vertical-align: middle;*/
   margin-bottom: 20px;
 }
 
@@ -139,11 +152,88 @@ a {
   text-align: left;
 }
 
-.panel-body {
- /*background-color: #f6f6f6;*/
-}
-
 .stats {
   display: inline-block;
   margin-left: 20px;
+}
+
+.three-icons {
+  background-color: #fff !important;
+}
+
+.features-list {
+  display: flex;
+  padding-left: 0;
+  flex-direction: column;
+}
+
+.feature-li {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 100%;
+  padding: 36px 0 36px 0;
+}
+
+.feature-icon {
+  font-size: 6em;
+  color: #265a88;
+}
+
+.splash {
+  height: calc(100vh - 54px);
+}
+
+.blue > a {
+  color: #1793d1 !important;
+}
+
+.blue > a:hover {
+  color: #00c7ff !important;
+}
+
+.btn-custom {
+  color: #fff;
+  background-color: #1793d1;
+  border: 1px solid #1280b7;
+}
+
+.btn-custom:hover {
+  color: #fff;
+  background-color: #137eb4;
+}
+
+.well {
+  padding: 19px;
+}
+
+.well .inline-block .btn {
+  padding: 6px 12px;
+}
+
+@media screen and (min-width: 768px) {
+  .features-list {
+    flex-direction: row;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .feature-li {
+    padding: 5% 0 5% 0;
+  }
+}
+
+@media (max-width: 372px) {
+  #controls-right {
+    margin-right: 0;
+  }
+
+  .well {
+    padding: 19px 4px;
+  }
+
+  .well .inline-block .btn {
+    padding: 6px 8px;
+  }
 }

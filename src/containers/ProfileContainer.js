@@ -10,7 +10,6 @@ export class ProfileContainer extends Component {
   }
 
   componentDidMount() {
-    console.log('prof mounted');
     this.props.dispatch(authActions.requestProfile())
   }
 

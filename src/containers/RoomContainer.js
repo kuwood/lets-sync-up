@@ -20,7 +20,6 @@ export class RoomContainer extends Component {
     if (!this.props.room.id) {
       this.props.dispatch(roomActions.roomId(this.props.params.roomName))
       socket.emit('joinRoom', this.props.params.roomName)
-      console.log(this.props.roomId, 'no room id found assigned it to params and joining room');
     }
   }
 
