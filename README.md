@@ -11,7 +11,7 @@ and to the right of the video player users can change their alias, see the room 
 
 ## In action:
 ### Home Page
-<img src='https://raw.githubusercontent.com/kuwood/lets-sync-up/master/img/homepage.png' width='800'>
+<img src='https://i.imgur.com/9RldyEj.png' width='800'>
 
 From this page you can:
 * Create a room
@@ -20,17 +20,17 @@ From this page you can:
 * Log in to an account
 
 ### Signing Up
-<img src='https://raw.githubusercontent.com/kuwood/lets-sync-up/master/img/signup.png' width='800'>
+<img src='https://i.imgur.com/pICxIxR.png' width='800'>
 From this modal you can:
 * Create an account by entering an alias, email, and desired password.
 
 ### Logging In
-<img src='https://raw.githubusercontent.com/kuwood/lets-sync-up/master/img/login.png' width='300'>
+<img src='https://i.imgur.com/jaivFGp.png' width='300'>
 From this pop over you can:
 * log in with your credentials
 
 ### In a room
-<img src='https://raw.githubusercontent.com/kuwood/lets-sync-up/master/img/inroomwithvid.png' width='800'>
+<img src='https://i.imgur.com/j56NRSp.png' width='800'>
 If you are the room owner you can:
 * Set the video id using a youtube link
 * Set the video position (time in seconds)
