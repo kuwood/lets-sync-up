@@ -8,13 +8,8 @@ import PlayerControls from '../components/PlayerControls'
 import Chat from '../components/Chat'
 import RoomControl from '../components/RoomControl'
 import * as roomActions from '../actions/roomActions'
-import * as videoActions from '../actions/videoActions'
 
 export class RoomContainer extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   componentDidMount() {
     // if room id is not set on mount, set it to the url/params
     if (!this.props.room.id) {

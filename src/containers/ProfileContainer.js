@@ -5,10 +5,6 @@ import * as authActions from '../actions/authActions'
 
 
 export class ProfileContainer extends Component {
-  constructor() {
-    super()
-  }
-
   componentDidMount() {
     this.props.dispatch(authActions.requestProfile())
   }

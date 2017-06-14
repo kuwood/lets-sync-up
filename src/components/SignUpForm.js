@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { Form, FormGroup, Col, FormControl, Button, HelpBlock, ControlLabel, Modal } from 'react-bootstrap'
+import { Form, FormGroup, FormControl, Button, ControlLabel, Modal } from 'react-bootstrap'
 import * as authActions from '../actions/authActions'
 
 export class SignUpForm extends Component {
