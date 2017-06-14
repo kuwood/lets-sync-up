@@ -74,7 +74,8 @@ iframe {
 }
 
 .chat-input {
-  width: calc(100% - 69px);
+  width: calc(100% - 72px);
+  vertical-align: bottom;
 }
 
 .App {
