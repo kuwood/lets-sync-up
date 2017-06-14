@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { socket } from '../index'
-import { Jumbotron, Button, Grid, Row, Col } from 'react-bootstrap'
+import { Jumbotron, Button } from 'react-bootstrap'
 
 export class Jumbo extends Component {
   constructor(props) {
