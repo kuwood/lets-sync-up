@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { Form, FormGroup, Col, FormControl, Button, ControlLabel } from 'react-bootstrap'
+import { Form, FormGroup, Col, FormControl, Button } from 'react-bootstrap'
 import * as authActions from '../actions/authActions'
 
 export class LoginForm extends Component {

@@ -78,10 +78,7 @@ export class Navigation extends Component {
     this.props.dispatch(chatActions.clearMessages())
 
     let room = ReactDOM.findDOMNode(this.roomId).value
-    let data = {
-      roomId: room,
-      name: this.props.alias
-    }
+
     browserHistory.push(`/room/${room}`);
     this.props.dispatch(roomActions.roomId(room))
     socket.emit('joinRoom', room)

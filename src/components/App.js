@@ -9,6 +9,9 @@ export class App extends Component {
       <div className="App">
         <Navigation />
         {this.props.children}
+        <footer>
+          <a href="https://github.com/kuwood/lets-sync-up">View on github</a>
+        </footer>
       </div>
     )
   }
