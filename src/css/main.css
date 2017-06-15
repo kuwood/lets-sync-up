@@ -183,10 +183,6 @@ iframe {
   color: #265a88;
 }
 
-.splash {
-  height: calc(100vh - 54px);
-}
-
 .blue > a {
   color: #1793d1 !important;
 }
@@ -240,6 +236,12 @@ iframe {
 
 .main-container {
   padding: 0;
+}
+
+footer {
+  height: 4em;
+  text-align: center;
+  transform: translateY(60%);
 }
 
 @media screen and (min-width: 768px) {
