@@ -73,6 +73,12 @@ export class Jumbo extends Component {
             </Jumbotron>
           </div>
           <div className="directions-wrap">
+            <div>
+              <div className="directions-heading">
+                <h3>Dont bother doing a "count down".</h3>
+                <p className="directions-text">Simplify YouTube Synchronization in three easy steps.</p>
+              </div>
+            </div>
             <div className="directions-container">
               <div className="directions-block">
                 <p className="directions-title">Create a room.</p>
