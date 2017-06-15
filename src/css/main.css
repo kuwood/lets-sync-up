@@ -83,7 +83,6 @@ iframe {
 }
 
 .jumbo-wrap {
-  margin-top: -20px;
   background-color: #eee;
   text-align: center;
 }
@@ -104,13 +103,6 @@ iframe {
 .vid-container h2 {
   text-align: center;
   padding-top: 160px;
-}
-
-.App-header {
-  background-color: #222;
-  height: 50px;
-  color: white;
-  vertical-align: middle;
 }
 
 .controls-container {
@@ -215,6 +207,10 @@ iframe {
   background-color: #fff;
 }
 
+.directions-heading {
+  padding: 3em;
+}
+
 .directions-container {
   padding: 2em 1em;
   color: #333;
@@ -239,9 +235,8 @@ iframe {
 }
 
 footer {
-  height: 4em;
+  padding: 2em;
   text-align: center;
-  transform: translateY(60%);
 }
 
 @media screen and (min-width: 768px) {
