@@ -8,7 +8,7 @@ import App from './components/App'
 import Jumbo from './components/Jumbo'
 import RoomContainer from './containers/RoomContainer'
 import './css/main.css'
-export let socket = io()
+export const socket = io()
 
 document.addEventListener('DOMContentLoaded', () => {
   render(
