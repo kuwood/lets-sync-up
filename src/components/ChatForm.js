@@ -7,18 +7,24 @@ export class ChatForm extends Component {
   constructor(props) {
     super(props)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleInput = this.handleInput.bind(this)
+    this.state = {message: ''}
   }
 
   handleSubmit(e) {
     e.preventDefault()
-    let message = ReactDOM.findDOMNode(this.messageInput).value
-    let room = this.props.room.id
-    let data = {
+    const message = this.state.message
+    const room = this.props.room.id
+    const data = {
       room: room,
       message: message
     }
     socket.emit('newMessage', data)
-    ReactDOM.findDOMNode(this.messageInput).value = ""
+    this.setState({message: ''})
+  }
+
+  handleInput(e) {
+    this.setState({message: e.target.value})
   }
 
   render () {
@@ -28,7 +34,7 @@ export class ChatForm extends Component {
           <div className="chat-input-wrap">
             <div className="inline-block chat-input">
               <FormControl
-                ref={input => {this.messageInput = input}}
+                onChange={this.handleInput}
               />
             </div>
             <div className="inline-block">
