@@ -1,7 +1,7 @@
 # Lets Sync Up
 
 ## Link:
-https://lets-sync-up.herokuapp.com/
+https://lets-sync-up.keithunderwood.com/
 
 ## Summary:
 This app allows you to watch a youtube video that is sync'd with all users in the room. Users in the room flag when they
@@ -11,7 +11,7 @@ and to the right of the video player users can change their alias, see the room 
 
 ## In action:
 ### Home Page
-<img src='https://i.imgur.com/9RldyEj.png' width='800'>
+<img src='http://i.imgur.com/HYGYY6u.png' width='800'>
 
 From this page you can:
 * Create a room
