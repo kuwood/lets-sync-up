@@ -34,6 +34,7 @@ export class ChatForm extends Component {
             <div className="inline-block chat-input">
               <FormControl
                 onChange={this.handleInput}
+                value={this.state.message}
               />
             </div>
             <div className="inline-block">
