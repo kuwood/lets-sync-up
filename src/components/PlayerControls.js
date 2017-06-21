@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Button, Form, FormControl, Well, FormGroup, OverlayTrigger, Popover } from 'react-bootstrap'
-import VideoSource from '../components/VideoSource'
+import VideoSource from './VideoSource'
 import * as videoActions from '../actions/videoActions'
 import * as userActions from '../actions/userActions'
 import * as roomActions from '../actions/roomActions'
@@ -62,9 +62,6 @@ export class PlayerControls extends Component {
   }
 
   render() {
-    let buttons
-    let positionInput
-    let spacer
     const positionPop = <Popover id="popover-positioned-bottom" title="Set video time">
       <FormGroup bsSize="small">
         <FormControl
@@ -73,56 +70,59 @@ export class PlayerControls extends Component {
         />
       </FormGroup>
     </Popover>
-    if (this.props.user.isOwner) {
-      positionInput = <OverlayTrigger
+
+    const positionInput = <OverlayTrigger
         rootClose
         trigger="click"
         placement="bottom"
         overlay={positionPop}
       >
-        <Button>Set video time</Button>
+        <Button>Set time</Button>
       </OverlayTrigger>
-      spacer = ' '
-      if (!this.props.room.isReady && !this.props.playing) {
-        buttons = <Button disabled>
-          Room not ready
-        </Button>
-      } else {
-        buttons = <Button onClick={this.toggleReady}>
-          {this.props.user.isReady ? "pause" : "play"}
-        </Button>
-      }
+      
+    const spacer = ' '
+    let actionButton
+    
+    if (this.props.user.isOwner && 
+        !this.props.room.isReady &&
+        !this.props.playing) {
+      actionButton = <Button disabled>
+        Room not ready
+      </Button>
+    } else if (this.props.room.isReady &&
+              this.props.user.isOwner) {
+      actionButton = <Button onClick={this.toggleReady}>
+        {this.props.user.isReady ? "pause" : "play"}
+      </Button>
     } else {
-      buttons = <Button onClick={this.toggleReady}>
+      actionButton = <Button onClick={this.toggleReady}>
         {this.props.user.isReady ? "Not ready" : "Ready"}
       </Button>
     }
+
     const vidPop = <Popover id="popover-positioned-bottom" title="Input Video">
       <VideoSource room={this.props.room} />
     </Popover>
-    let vidSource
-    if (this.props.user.isOwner) {
-      vidSource = <OverlayTrigger
+
+    const vidSource = <OverlayTrigger
         rootClose
         trigger="click"
         placement="bottom"
         overlay={vidPop}
       >
-        <Button>Set input video</Button>
+        <Button>Set input</Button>
       </OverlayTrigger>
-    }
-    else vidSource = null
 
     return (
       <Well bsClass="well text-center">
         <div className="inline-block">
-          {vidSource}
+          {this.props.user.isOwner && vidSource}
         </div>
         <div id="controls-right" className="inline-block">
           <Form inline>
-            {positionInput}
-            {spacer}
-            {buttons}
+            {this.props.user.isOwner && this.props.video.id && positionInput}
+            {this.props.user.isOwner && this.props.video.id && spacer}
+            {this.props.video.id && actionButton}
           </Form>
         </div>
       </Well>
