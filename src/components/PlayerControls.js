@@ -12,6 +12,7 @@ export class PlayerControls extends Component {
     super(props)
     this.setPosition = this.setPosition.bind(this)
     this.toggleReady = this.toggleReady.bind(this)
+    this.handlePositionInput = this.handlePositionInput.bind(this)
 
     socket.on('roomReady', bool => {
       this.props.dispatch(roomActions.roomReady(bool))
@@ -30,15 +31,18 @@ export class PlayerControls extends Component {
     socket.on('broadcastPosition', data => {
       this.props.dispatch(videoActions.setPosition(data))
     })
+    this.setState({position: 0})
   }
 
-  setPosition(e) {
-    let input
-    if (e.target.value) {
-      input = e.target.value * 1000
-      socket.emit('setPosition', {position: input, room: this.props.room.id})
-      this.props.dispatch(videoActions.setPosition(input))
-    }
+  setPosition() {
+    const {position} = this.state
+    socket.emit('setPosition', {position, room: this.props.room.id})
+    this.props.dispatch(videoActions.setPosition(position))
+  }
+
+  handlePositionInput(e) {
+    const timeInSeconds = e.target.value * 1000
+    this.setState({position: timeInSeconds})
   }
 
   toggleReady() {
@@ -65,8 +69,9 @@ export class PlayerControls extends Component {
       <FormGroup bsSize="small">
         <FormControl
           placeholder="Enter a time (in seconds)"
-          onBlur={this.setPosition}
+          onChange={this.handlePositionInput}
         />
+        <Button onClick={this.setPosition}>Go!</Button>
       </FormGroup>
     </Popover>
 
