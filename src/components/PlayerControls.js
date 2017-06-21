@@ -31,7 +31,7 @@ export class PlayerControls extends Component {
     socket.on('broadcastPosition', data => {
       this.props.dispatch(videoActions.setPosition(data))
     })
-    this.setState({position: 0})
+    this.state = {position: 0}
   }
 
   setPosition() {
