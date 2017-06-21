@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import ReactDOM from 'react-dom'
 import { Glyphicon, Modal, Button, Form, FormControl, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { socket } from '../index'
 import * as userActions from '../actions/userActions'
@@ -10,6 +9,8 @@ class RoomControl extends Component {
     super(props)
     this.handleAlias = this.handleAlias.bind(this)
     this.toggleAlias = this.toggleAlias.bind(this)
+    this.handleAliasInput = this.handleAliasInput.bind(this)
+    this.state = {name: this.props.alias}
   }
 
   handleKick(user) {
@@ -25,31 +26,38 @@ class RoomControl extends Component {
   // handles setting new alias from modal
   handleAlias(e) {
     e.preventDefault()
-    let newAlias = ReactDOM.findDOMNode(this.inputAlias).value
-    let aliasData = {roomId: this.props.roomId, name: newAlias}
+    const newAlias = this.state.name
+    const aliasData = {roomId: this.props.roomId, name: newAlias}
     this.props.dispatch(userActions.alias(newAlias))
     socket.emit('setAlias', aliasData)
     this.props.dispatch(userActions.aliasModal(false))
   }
 
+  handleAliasInput(e) {
+    this.setState({name: e.target.value})
+  }
+
   render () {
-    let aliasModal = <Form>
-    <Modal show={this.props.modal} onHide={this.toggleAlias}>
-      <Modal.Header>
-        <Modal.Title>Set New Alias</Modal.Title>
-      </Modal.Header>
+    const aliasModal = <Form>
+      <Modal show={this.props.modal} onHide={this.toggleAlias}>
+        <Modal.Header>
+          <Modal.Title>Set New Alias</Modal.Title>
+        </Modal.Header>
 
-      <Modal.Body>
-        <FormControl ref={input => {this.inputAlias = input}} />
-      </Modal.Body>
+        <Modal.Body>
+          <FormControl onChange={this.handleAliasInput}
+            value={this.state.name}
+            placeholder={this.props.alias} />
+        </Modal.Body>
 
-      <Modal.Footer>
-        <Button onClick={this.toggleAlias}>Close</Button>
-        <Button type="submit" bsStyle="custom" onClick={this.handleAlias}>Save changes</Button>
-      </Modal.Footer>
+        <Modal.Footer>
+          <Button onClick={this.toggleAlias}>Close</Button>
+          <Button type="submit" bsStyle="custom" onClick={this.handleAlias}>Save changes</Button>
+        </Modal.Footer>
 
-    </Modal>
+      </Modal>
     </Form>
+
     return (
       <div id="users-control">
         {aliasModal}
