@@ -3,33 +3,39 @@ import ReactDOM from 'react-dom'
 import { socket } from '../index'
 import { Button, Form, FormControl, FormGroup } from 'react-bootstrap'
 
-
-
 export class VideoSource extends Component {
   constructor(props) {
     super(props)
     this.grabVideo = this.grabVideo.bind(this)
-
+    this.handleInput = this.handleInput.bind(this)
+    this.state = {url: ''}
   }
 
   grabVideo(e) {
     e.preventDefault()
-    let url = ReactDOM.findDOMNode(this.videoUrl).value
-    let regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-    let match = url.match(regExp);
-    let id = match&&match[7].length===11 ? match[7] : false
-    if (id) socket.emit('videoId', {id: id, room: this.props.room.id})
-    else console.log('this id is broke', id)
+    const {url} = this.state
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    const id = match&&match[7].length===11 ? match[7] : false
+    
+    if (id) {
+      socket.emit('videoId', {id: id, room: this.props.room.id})
+      this.props.refs.sourceOverlay.handleHide()
+    }
+    else alert('this id is broke', id)
   }
 
+  handleInput(e) {
+    this.setState({url: e.target.value})
+  }
 
   render() {
-    // <Panel header="Enter the youtube url below:">
     return (
       <div className="vid-source">
         <Form inline onSubmit={this.grabVideo}>
           <FormGroup bsSize="small">
             <FormControl
+              onChange={this.handleInput}
               ref={input => {this.videoUrl = input}}
               type="text"
               placeholder="https://www.youtube.com/..."
@@ -39,7 +45,6 @@ export class VideoSource extends Component {
               Go!
             </Button>
           </FormGroup>
-
         </Form>
       </div>
     )

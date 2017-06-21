@@ -7,7 +7,6 @@ import * as userActions from '../actions/userActions'
 import * as roomActions from '../actions/roomActions'
 import { socket } from '../index'
 
-
 export class PlayerControls extends Component {
   constructor(props) {
     super(props)
@@ -101,7 +100,7 @@ export class PlayerControls extends Component {
     }
 
     const vidPop = <Popover id="popover-positioned-bottom" title="Input Video">
-      <VideoSource room={this.props.room} />
+      <VideoSource room={this.props.room} refs={this.refs}/>
     </Popover>
 
     const vidSource = <OverlayTrigger
@@ -109,10 +108,11 @@ export class PlayerControls extends Component {
         trigger="click"
         placement="bottom"
         overlay={vidPop}
+        ref={'sourceOverlay'}
       >
         <Button>Set input</Button>
       </OverlayTrigger>
-
+    
     return (
       <Well bsClass="well text-center">
         <div className="inline-block">
@@ -130,6 +130,6 @@ export class PlayerControls extends Component {
   }
 }
 
-let Container = connect()(PlayerControls)
+const Container = connect()(PlayerControls)
 
 export default Container
