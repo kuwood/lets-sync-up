@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import { socket } from '../index'
 import { Button, Form, FormControl, FormGroup } from 'react-bootstrap'
 
