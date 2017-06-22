@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Glyphicon, Modal, Button, Form, FormControl, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { socket } from '../index'
+import ListUser from './ListUser'
 import * as userActions from '../actions/userActions'
 
 class RoomControl extends Component {
@@ -72,45 +73,19 @@ class RoomControl extends Component {
           {this.props.users.map((user, index) => {
             if (this.props.isOwner) {
               if (user.isOwner) {
-                return (<li key={index} className="user-li">
-                    <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-status-${index}`}>Is the Owner</Tooltip>}><Glyphicon glyph="king" /></OverlayTrigger>
-                    <span className="user-list-alias">{user.alias}</span>
-                  </li>
-                )
+                return <ListUser key={index} tooltip='Is the Owner' glyph='king' alias={user.alias} />
               } else if (user.isReady) {
-                return (<li key={index} className="user-li">
-                  <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-status-${index}`}>Is ready</Tooltip>}><Glyphicon glyph="thumbs-up" /></OverlayTrigger>
-                  <span className="user-list-alias">{user.alias}</span>
-                <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-kick-${index}`}>Kick user</Tooltip>}><a className="kick" onClick={() => this.handleKick(user)}><Glyphicon glyph="remove" /></a></OverlayTrigger>
-                  </li>
-                )
+                return <ListUser key={index} tooltip='Is ready' glyph='thumbs-up' alias={user.alias} kickUser={() => this.handleKick(user)} />
               } else {
-                return (<li key={index} className="user-li">
-                  <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-status-${index}`}>Is not ready</Tooltip>}><Glyphicon glyph="thumbs-down" /></OverlayTrigger>
-                  <span className="user-list-alias">{user.alias}</span>
-                <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-kick-${index}`}>Kick user</Tooltip>}><a className="kick" onClick={() => this.handleKick(user)}><Glyphicon glyph="remove" /></a></OverlayTrigger>
-                  </li>
-                )
+                return <ListUser key={index} tooltip='Is not ready' glyph='thumbs-down' alias={user.alias} kickUser={() => this.handleKick(user)} />
               }
             } else {
               if (user.isOwner) {
-                return (<li key={index} className="user-li">
-                    <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-status-${index}`}>Is the Owner</Tooltip>}><Glyphicon glyph="king" /></OverlayTrigger>
-                    <span className="user-list-alias">{user.alias}</span>
-                  </li>
-                )
+                return <ListUser key={index} tooltip='Is the Owner' glyph='king' alias={user.alias} />
               } else if (user.isReady) {
-                return (<li key={index} className="user-li">
-                  <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-status-${index}`}>Is ready</Tooltip>}><Glyphicon glyph="thumbs-up" /></OverlayTrigger>
-                  <span className="user-list-alias">{user.alias}</span>
-                  </li>
-                )
+                return <ListUser key={index} tooltip='Is ready' glyph='thumbs-up' alias={user.alias} />
               } else {
-                return (<li key={index} className="user-li">
-                  <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-status-${index}`}>Is not ready</Tooltip>}><Glyphicon glyph="thumbs-down" /></OverlayTrigger>
-                  <span className="user-list-alias">{user.alias}</span>
-                  </li>
-                )
+                return <ListUser key={index} tooltip='Is not ready' glyph='thumbs-down' alias={user.alias} />
               }
             }
           })}
