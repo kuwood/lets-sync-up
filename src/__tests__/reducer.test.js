@@ -119,10 +119,9 @@ describe('userReducer', () => {
     expect(
       userReducer(undefined, {})
     ).toEqual({
-      alias: null,
+      alias: '',
       isOwner: false,
       isReady: false,
-      alias: null,
       aliasModal: false
     })
   })
@@ -134,10 +133,9 @@ describe('userReducer', () => {
         isReady: true
       })
     ).toEqual({
-      alias: null,
+      alias: '',
       isOwner: false,
       isReady: true,
-      alias: null,
       aliasModal: false
     })
   })
@@ -147,7 +145,7 @@ describe('userReducer', () => {
       userReducer({
         isOwner: false,
         isReady: true,
-        alias: null,
+        alias: '',
         aliasModal: false
       }, {
         type: userActions.IS_NOT_READY,
@@ -156,7 +154,7 @@ describe('userReducer', () => {
     ).toEqual({
       isOwner: false,
       isReady: false,
-      alias: null,
+      alias: '',
       aliasModal: false
     })
   })
@@ -170,7 +168,7 @@ describe('userReducer', () => {
     ).toEqual({
       isOwner: true,
       isReady: false,
-      alias: null,
+      alias: '',
       aliasModal: false
     })
   })

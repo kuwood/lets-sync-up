@@ -3,7 +3,7 @@ import * as userActions from '../actions/userActions'
 const initialState = {
   isReady: false,
   isOwner: false,
-  alias: null,
+  alias: '',
   aliasModal: false
 }
 

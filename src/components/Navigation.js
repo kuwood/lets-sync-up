@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { Navbar, Nav, NavItem, Popover, Form, FormGroup,FormControl,
   OverlayTrigger, NavDropdown, MenuItem } from 'react-bootstrap'
@@ -23,6 +22,7 @@ export class Navigation extends Component {
     this.profile = this.profile.bind(this)
     this.logout = this.logout.bind(this)
     this.home = this.home.bind(this)
+    this.state = {roomId: ''}
   }
 
   componentDidMount() {
@@ -47,7 +47,7 @@ export class Navigation extends Component {
     })
     socket.on('requestAlias', defaultAlias => {
       if (this.props.auth.isAuthenticated) {
-        let aliasData = {roomId: this.props.room.id, name: this.props.alias}
+        const aliasData = {roomId: this.props.room.id, name: this.props.alias}
         socket.emit('setAlias', aliasData)
       } else {
         this.props.dispatch(userActions.alias(defaultAlias))
@@ -57,7 +57,7 @@ export class Navigation extends Component {
     socket.on('chatMessage', data => {
       this.props.dispatch(chatActions.newMessage(data))
       if (this.props.room.id) {
-        let element = document.getElementById('chat-container')
+        const element = document.getElementById('chat-container')
         element.scrollTop = element.scrollHeight
       }
     })
@@ -70,6 +70,10 @@ export class Navigation extends Component {
     socket.emit('createRoom')
   }
 
+  handleRoomInput(e) {
+    this.setState({roomId: e.target.value})
+  }
+
   joinRoom(e) {
     e.preventDefault()
     if (this.props.room.id) socket.emit('leaveRoom', this.props.room.id)
@@ -77,18 +81,20 @@ export class Navigation extends Component {
     this.props.dispatch(videoActions.setVideo(null))
     this.props.dispatch(chatActions.clearMessages())
 
-    let room = ReactDOM.findDOMNode(this.roomId).value
+    const {roomId} = this.state
 
-    browserHistory.push(`/room/${room}`);
-    this.props.dispatch(roomActions.roomId(room))
-    socket.emit('joinRoom', room)
+    browserHistory.push(`/room/${roomId}`);
+    this.props.dispatch(roomActions.roomId(roomId))
+    socket.emit('joinRoom', roomId)
     if (this.props.auth.isAuthenticated) {
-      let data = {
-        roomId: room,
+      const data = {
+        roomId: roomId,
         name: this.props.alias
       }
       socket.emit('setAlias', data)
     }
+    // handle hide manually
+    this.refs.joinPop.handleHide()
   }
 
   showModal() {
@@ -117,7 +123,8 @@ export class Navigation extends Component {
         <Form inline onSubmit={this.joinRoom}>
           <FormGroup bsSize="small">
             <FormControl
-              ref={input => {this.roomId = input}}
+              onChange={this.handleRoomInput.bind(this)}
+              value={this.state.roomId}
               type="text"
               placeholder="room..."
             />
@@ -128,7 +135,7 @@ export class Navigation extends Component {
           </FormGroup>
         </Form>
       </Popover>
-    );
+    )
     return (
       <Navbar inverse>
         <Navbar.Header>
@@ -145,6 +152,7 @@ export class Navigation extends Component {
               trigger="click"
               placement="bottom"
               overlay={joinPop}
+              ref={'joinPop'}
             >
               <NavItem eventKey={2}>Join a room</NavItem>
             </OverlayTrigger>
