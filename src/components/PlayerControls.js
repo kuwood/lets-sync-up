@@ -71,7 +71,7 @@ export class PlayerControls extends Component {
           placeholder="Enter a time (in seconds)"
           onChange={this.handlePositionInput}
         />
-        <Button onClick={this.setPosition}>Go!</Button>
+        <Button style={{'margin-top': '5px'}} block onClick={this.setPosition}>Go!</Button>
       </FormGroup>
     </Popover>
 

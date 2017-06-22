@@ -8,7 +8,8 @@ import App from './components/App'
 import Jumbo from './components/Jumbo'
 import RoomContainer from './containers/RoomContainer'
 import './css/main.css'
-export const socket = io()
+export const socket = process.env.NODE_ENV === 'production' ? io() :
+  io.connect('localhost:8080')
 
 document.addEventListener('DOMContentLoaded', () => {
   render(
