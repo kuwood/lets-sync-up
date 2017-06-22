@@ -27,7 +27,7 @@ class RoomControl extends Component {
   // handles setting new alias from modal
   handleAlias(e) {
     e.preventDefault()
-    const newAlias = this.state.name
+    const newAlias = this.state.name || this.props.alias
     const aliasData = {roomId: this.props.roomId, name: newAlias}
     this.props.dispatch(userActions.alias(newAlias))
     socket.emit('setAlias', aliasData)
