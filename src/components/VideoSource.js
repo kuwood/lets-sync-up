@@ -40,7 +40,7 @@ export class VideoSource extends Component {
               placeholder="https://www.youtube.com/..."
             />
             {' '}
-            <Button type="submit" bsSize="small">
+            <Button style={{'margin-top': '5px'}} block type="submit" bsSize="small">
               Go!
             </Button>
           </FormGroup>
