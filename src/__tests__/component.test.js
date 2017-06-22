@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { shallow, mount, render } from 'enzyme'
-import { FormControl } from 'react-bootstrap'
 import { PlayerControls } from '../components/PlayerControls'
 import { App } from '../components/App'
 import { Chat } from '../components/Chat'
@@ -24,13 +23,29 @@ describe('App', () => {
 describe('PlayerControls', () => {
   it('renders PlayerControls without crashing', () => {
     const userState = {
+      isReady: false,
       isOwner: false,
-      isReady: false
+      alias: '',
+      aliasModal: false
+    }
+    const roomState = {
+      isReady: false,
+      ownerReady: false,
+      id: null,
+      users: []
+    }
+    const videoState = {
+      playing: false,
+      position: 0,
+      id: null
     }
     const div = document.createElement('div')
     ReactDOM.render(
       <PlayerControls
         user={userState}
+        room={roomState}
+        video={videoState}
+        playing={videoState.playing}
       />, div)
   })
 })
