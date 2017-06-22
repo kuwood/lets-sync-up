@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { Form, FormGroup, FormControl, Button, ControlLabel, Modal } from 'react-bootstrap'
 import * as authActions from '../actions/authActions'
@@ -9,6 +8,11 @@ export class SignUpForm extends Component {
     super()
     this.handleSubmit = this.handleSubmit.bind(this)
     this.toggleModal = this.toggleModal.bind(this)
+    this.state = {
+      username: '',
+      password: '',
+      alias: ''
+    }
   }
 
   toggleModal() {
@@ -17,19 +21,18 @@ export class SignUpForm extends Component {
 
   handleSubmit(e) {
     e.preventDefault()
-    let alias = ReactDOM.findDOMNode(this.formAlias)
-    let usr = ReactDOM.findDOMNode(this.formUsername)
-    let pw = ReactDOM.findDOMNode(this.formPassword)
-    let data = {
-      username: usr.value,
-      password: pw.value,
-      alias: alias.value
-    }
-    this.props.dispatch(authActions.requestSignUp(data))
-    usr.value = ""
-    pw.value = ""
-    alias.value = ""
+    const newUser = this.state
+    this.props.dispatch(authActions.requestSignUp(newUser))
+    this.setState({oassword: ''})
     this.props.dispatch(authActions.signUpModal(false))
+  }
+
+  handleInputs = propertyName => event => {
+    const data = this.state
+    this.setState({
+      ...data,
+      [propertyName]: event.target.value
+    })
   }
 
   render() {
@@ -44,7 +47,7 @@ export class SignUpForm extends Component {
               <ControlLabel>Alias</ControlLabel>
               <FormControl
                 type="text"
-                ref={alias => {this.formAlias = alias}}
+                onChange={this.handleInputs('alias')}
                 placeholder="Enter an alias"
               />
             </FormGroup>
@@ -53,7 +56,7 @@ export class SignUpForm extends Component {
               <ControlLabel>Email address</ControlLabel>
               <FormControl
                 type="email"
-                ref={email => {this.formUsername = email}}
+                onChange={this.handleInputs('username')}
                 placeholder="Enter email"
               />
             </FormGroup>
@@ -62,7 +65,7 @@ export class SignUpForm extends Component {
               <ControlLabel>Password</ControlLabel>
               <FormControl
                 type="password"
-                ref={pw => {this.formPassword = pw}}
+                onChange={this.handleInputs('password')}
               />
             </FormGroup>
           </Form>
